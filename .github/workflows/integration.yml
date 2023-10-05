@@ -8,22 +8,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: password
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    - name: Update
+      run : sudo apt-get update
     - name: Setup MySQL
-      run: |
-        sudo apt-get install -y mysql-client
-        mysql --host 127.0.0.1 --port 3306 --user=root --password=password -e 'CREATE DATABASE IF NOT EXISTS test_db;'
+      run: sudo apt install mysql-server -y
+    - name: status of MySql
+      run: sudo service mysql status
+    - name: mysql find
+      run: sudo ss -tap | grep mysql 
+    - name: creating database
+      run: sudo mysql -u root -e "CREATE DATABASE test"
 
 
 
@@ -77,7 +74,7 @@ jobs:
 
       env:
 
-        DB_HOST: 172.18.0.1
+        DB_HOST: 127.0.0.1
 
         DB_PORT: 3306
 
@@ -85,7 +82,7 @@ jobs:
 
         DB_PASSWORD: password
 
-        DB_NAME: test_db
+        DB_NAME: test
 
       run: npm test
       
