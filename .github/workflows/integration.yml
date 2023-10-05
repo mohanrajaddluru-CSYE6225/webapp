@@ -1,7 +1,7 @@
 name: MySQL GitHub Actions
 
 on:
-  push:
+  pull:
     branches:
       - main
 
