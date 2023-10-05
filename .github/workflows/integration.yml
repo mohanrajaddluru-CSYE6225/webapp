@@ -21,47 +21,47 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-    steps:
-    - name: Start MariaDB
-      run: |
-        docker run -d --name mariadb \
-          -e MYSQL_ROOT_PASSWORD='Test@123' \
-          -e MYSQL_USER=root \
-          -e MYSQL_PASSWORD='Test@123' \
-          -e MYSQL_DATABASE=test \
-          -p 3306:3306 \
-          mariadb:latest
-      continue-on-error: true # Continue even if the container startup fails
+      steps:
+       - name: Start MariaDB
+         run: |
+           docker run -d --name mariadb \
+              -e MYSQL_ROOT_PASSWORD='Test@123' \
+              -e MYSQL_USER=root \
+              -e MYSQL_PASSWORD='Test@123' \
+              -e MYSQL_DATABASE=test \
+              -p 3306:3306 \
+            mariadb:latest
+        continue-on-error: true # Continue even if the container startup fails
 
-      - name: Wait for MariaDB to be healthy
-      run: |
-        timeout 60 bash -c \
-          'while [[ "$(docker inspect -f {{.State.Health.Status}} mariadb)" != "healthy" ]]; do
-            sleep 1; 
-            done'
+        - name: Wait for MariaDB to be healthy
+          run: |
+            timeout 60 bash -c \
+              'while [[ "$(docker inspect -f {{.State.Health.Status}} mariadb)" != "healthy" ]]; do
+                sleep 1; 
+                done'
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+        - name: Checkout code
+          uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
+        - name: Setup Node.js
+          uses: actions/setup-node@v2
+          with:
+            node-version: '14'
 
-      - name: Install dependencies
-        run: npm install
+        - name: Install dependencies
+          run: npm install
 
-      - name: Run tests
-        run: npm test
+        - name: Run tests
+          run: npm test
 
-      - name: Build and Deploy
-        run: |
+        - name: Build and Deploy
+          run: |
           # Replace with your build and deployment commands
-          npm test
+            npm test
           # Example deployment command: npm run deploy
 
-      - name: Wait for MariaDB to be healthy
-        run: docker wait mariadb
+        - name: Wait for MariaDB to be healthy
+          run: docker wait mariadb
 
-      - name: Cleanup MariaDB container
-        run: docker stop mariadb
+        - name: Cleanup MariaDB container
+          run: docker stop mariadb
