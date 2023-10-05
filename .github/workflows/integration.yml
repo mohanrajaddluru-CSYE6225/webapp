@@ -82,7 +82,9 @@ jobs:
 
     #     done
 
- 
+    - name: install mocha 
+      run : npm install mocha
+
 
     - name: Run Tests
 
