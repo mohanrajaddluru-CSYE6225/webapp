@@ -1,25 +1,23 @@
-name: MySQL GitHub Actions
+name: Node api testing
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  build:
+  api_test:
     runs-on: ubuntu-latest
-    services:
-        env:
-          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-          DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-          DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-          DATABASE_USER: ${{secrets.DATABASE_USER}}
-          PORT: ${{secrets.PORT}}
+    env:
+        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+        DATABASE_USER: ${{ secrets.DATABASE_USER }}
+        PORT: ${{ secrets.PORT }}
+    strategy:
+      matrix:
+        node-version: [18.x]
         
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Shutdown Ubuntu MySQL (SUDO)
         run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
 
@@ -37,16 +35,11 @@ jobs:
       - name: Create Database
         run: mysql -h $DATABASE_HOST -u $DATABASE_USER -p $DATABASE_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME"
 
-      - name: Install Node.js
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
-          node-version: 14
-
-      - name: Install dependencies
-        run: npm install
-      
-      - name: Install MOcha
-        run: npm install mocha
-
-      - name: Run tests
-        run: npm test
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test -- --exit
