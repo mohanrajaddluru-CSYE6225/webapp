@@ -1,31 +1,21 @@
-name: Health Check Integeration Test
-
- 
+name: MySQL GitHub Actions
 
 on:
-
-pull_request:
-
-   branches:
-
-     - main
-
-workflow_dispatch:
-
- 
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-      DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-      DATABASE_USER: ${{secrets.DATABASE_USER}}
-      PORT: ${{secrets.PORT}}
-
-  
-
+    services:
+        env:
+          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+          DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          DATABASE_USER: ${{secrets.DATABASE_USER}}
+          PORT: ${{secrets.PORT}}
+        
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -41,17 +31,11 @@ jobs:
       - name: Start MySQL Service
         run: sudo service mysql start
 
-  
-
       - name: Change MySQL Root Password
         run: mysql -u $DATABASE_USER -p root -e "ALTER USER '$DATABASE_USER'@'$DATABASE_HOST' IDENTIFIED BY '$DATABASE_PASSWORD'; FLUSH PRIVILEGES;"
 
-  
-
       - name: Create Database
         run: mysql -h $DATABASE_HOST -u $DATABASE_USER -p $DATABASE_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME"
-
-  
 
       - name: Install Node.js
         uses: actions/setup-node@v2
