@@ -1,50 +1,49 @@
-name: Integ-Testing
+name: Node.js with MariaDB CI/CD
 
-
-on: [pull_request]
+on:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     services:
-      mysql:
-        image: mysql:5.7
+      mariadb:
+        image: mariadb:latest
         env:
-          MYSQL_ROOT_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: 'Test@123'
+          MYSQL_USER: root
+          MYSQL_PASSWORD: 'Test@123'
           MYSQL_DATABASE: test
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
-    - name: Install Dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    # - name: Wait for MySQL to be ready
-    #   run: |
-    #     n=0
-    #     until [ $n -ge 5 ]
-    #     do
-    #       npm run db:migrate:up # Replace with your database migration command
-    #       [ $? -eq 0 ] && break
-    #       n=$[$n+1]
-    #       sleep 15
-    #     done
+      - name: Run tests
+        run: npm test
 
-    - name: Run Tests
-      env:
-        DB_HOST: localhost
-        DB_PORT: 3306
-        DB_USER: root
-        DB_PASSWORD: Test@123
-        DB_NAME: test
-      run: npm test
+      - name: Build and Deploy
+        run: |
+          # Replace with your build and deployment commands
+          npm test
+          # Example deployment command: npm run deploy
+
+      - name: Wait for MariaDB to be healthy
+        run: docker wait mariadb
+
+      - name: Cleanup MariaDB container
+        run: docker stop mariadb
