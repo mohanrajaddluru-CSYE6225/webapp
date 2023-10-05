@@ -112,6 +112,9 @@ build:
 
        run: npm install
 
+     - name: Install Mocha
+       run: npm install mocha 
+
  
 
      - name: Run tests
