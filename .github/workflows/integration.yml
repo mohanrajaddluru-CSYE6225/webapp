@@ -15,8 +15,6 @@ jobs:
       run : sudo apt-get update
     - name: Setup MySQL
       run: sudo apt install mysql-server -y
-    - name: status of MySql
-      run: sudo service mysql status
     - name: mysql find
       run: sudo ss -tap | grep mysql 
     - name: creating database
