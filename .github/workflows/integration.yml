@@ -26,29 +26,15 @@ build:
 
    env:
 
-     DB_DATABASE: ${{secrets.DB_DATABASE}}
+     DATABASE_NAME: ${{secrets.DATABASE_NAME}}
 
-     DB_HOST: ${{secrets.DATABASE_HOST}}
+     DATABASE_HOST: ${{secrets.DATABASE_HOST}}
 
-     DB_PASS: ${{secrets.DATABASE_PASSWORD}}
+     DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
 
-     DB_USER: ${{secrets.DATABASE_USER}}
-
-     DB_NAME: ${{secrets.DATABASE_NAME}}
-
-     DB_DIALECT: ${{secrets.DB_DIALECT}}
-
-     DB_POOL_MIN: ${{secrets.DB_POOL_MIN}}
-
-     DB_POOL_MAX: ${{secrets.DB_POOL_MAX}}
-
-     DB_POOL_ACQUIRE: ${{secrets.DB_POOL_ACQUIRE}}
-
-     DB_POOL_IDLE: ${{secrets.DB_POOL_IDLE}}
+     DATABASE_USER: ${{secrets.DATABASE_USER}}
 
      PORT: ${{secrets.PORT}}
-
-     USERS_CSV_PATH: ${{secrets.USERS_CSV_PATH}}
 
  
 
@@ -86,7 +72,7 @@ build:
 
        run: |
 
-        mysql -u $DB_USER -proot -e "ALTER USER '$DB_USER'@'$DB_HOST' IDENTIFIED BY '$DB_PASS'; FLUSH PRIVILEGES;"
+        mysql -u $DATABASE_USER -p root -e "ALTER USER '$DATABASE_USER'@'$DATABASE_HOST' IDENTIFIED BY '$DATABASE_PASSWORD'; FLUSH PRIVILEGES;"
 
  
 
@@ -94,7 +80,7 @@ build:
 
        run: |
 
-         mysql -h $DB_HOST -u $DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE"
+         mysql -h $DATABASE_HOST -u $DATABASE_USER -p $DATABASE_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME"
 
  
 
@@ -109,16 +95,10 @@ build:
  
 
      - name: Install dependencies
-
        run: npm install
-
-     - name: Install Mocha
-       run: npm install mocha 
-
- 
+    
+    - name: Install MOcha
+       run: npm install mocha
 
      - name: Run tests
-
        run: npm test
-
- 
