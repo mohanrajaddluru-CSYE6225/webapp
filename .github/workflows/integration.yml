@@ -17,17 +17,15 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-  steps:
+    steps:
     - name: Checkout code
-    uses: actions/checkout@v2
+      uses: actions/checkout@v2
     - name: Setup MySQL
       run: |
         sudo apt-get install -y mysql-client
         mysql --host 127.0.0.1 --port 3306 --user=root --password=password -e 'CREATE DATABASE IF NOT EXISTS test_db;'
 
 
-
-    steps:
 
     - name: Checkout code
 
