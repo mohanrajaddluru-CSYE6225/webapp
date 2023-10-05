@@ -15,90 +15,54 @@ workflow_dispatch:
  
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+      DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+      DATABASE_USER: ${{secrets.DATABASE_USER}}
+      PORT: ${{secrets.PORT}}
 
-build:
+  
 
-   runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
- 
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
 
- 
+      - name: Install MySQL
+        run: |
+          sudo apt-get update -qy
+          sudo apt-get install -qy mysql-server
 
-   env:
+      - name: Start MySQL Service
+        run: sudo service mysql start
 
-     DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+  
 
-     DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+      - name: Change MySQL Root Password
+        run: mysql -u $DATABASE_USER -p root -e "ALTER USER '$DATABASE_USER'@'$DATABASE_HOST' IDENTIFIED BY '$DATABASE_PASSWORD'; FLUSH PRIVILEGES;"
 
-     DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+  
 
-     DATABASE_USER: ${{secrets.DATABASE_USER}}
+      - name: Create Database
+        run: mysql -h $DATABASE_HOST -u $DATABASE_USER -p $DATABASE_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME"
 
-     PORT: ${{secrets.PORT}}
+  
 
- 
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
 
-   steps:
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Install MOcha
+        run: npm install mocha
 
-     - name: Checkout code
-
-       uses: actions/checkout@v2
-
- 
-
-     - name: Shutdown Ubuntu MySQL (SUDO)
-
-       run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
-
- 
-
-     - name: Install MySQL
-
-       run: |
-
-         sudo apt-get update -qy
-
-         sudo apt-get install -qy mysql-server
-
- 
-
-     - name: Start MySQL Service
-
-       run: sudo service mysql start
-
- 
-
-     - name: Change MySQL Root Password
-
-       run: |
-
-        mysql -u $DATABASE_USER -p root -e "ALTER USER '$DATABASE_USER'@'$DATABASE_HOST' IDENTIFIED BY '$DATABASE_PASSWORD'; FLUSH PRIVILEGES;"
-
- 
-
-     - name: Create Database
-
-       run: |
-
-         mysql -h $DATABASE_HOST -u $DATABASE_USER -p $DATABASE_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME"
-
- 
-
-     - name: Install Node.js
-
-       uses: actions/setup-node@v2
-
-       with:
-
-         node-version: 14
-
- 
-
-     - name: Install dependencies
-       run: npm install
-    
-    - name: Install MOcha
-       run: npm install mocha
-
-     - name: Run tests
-       run: npm test
+      - name: Run tests
+        run: npm test
