@@ -1,67 +1,121 @@
-name: Node.js with MariaDB CI/CD
+name: Health Check Integeration Test
+
+ 
 
 on:
-  pull_request:
-    branches:
-      - main
+
+pull_request:
+
+   branches:
+
+     - main
+
+workflow_dispatch:
+
+ 
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
 
-    services:
-      mariadb:
-        image: mariadb:latest
-        env:
-          MYSQL_ROOT_PASSWORD: 'Test@123'
-          MYSQL_USER: root
-          MYSQL_PASSWORD: 'Test@123'
-          MYSQL_DATABASE: test
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+build:
 
-      steps:
-       - name: Start MariaDB
-         run: |
-           docker run -d --name mariadb \
-              -e MYSQL_ROOT_PASSWORD='Test@123' \
-              -e MYSQL_USER=root \
-              -e MYSQL_PASSWORD='Test@123' \
-              -e MYSQL_DATABASE=test \
-              -p 3306:3306 \
-            mariadb:latest
-        continue-on-error: true # Continue even if the container startup fails
+   runs-on: ubuntu-latest
 
-        - name: Wait for MariaDB to be healthy
-          run: |
-            timeout 60 bash -c \
-              'while [[ "$(docker inspect -f {{.State.Health.Status}} mariadb)" != "healthy" ]]; do
-                sleep 1; 
-                done'
+ 
 
-        - name: Checkout code
-          uses: actions/checkout@v2
+ 
 
-        - name: Setup Node.js
-          uses: actions/setup-node@v2
-          with:
-            node-version: '14'
+   env:
 
-        - name: Install dependencies
-          run: npm install
+     DB_DATABASE: ${{secrets.DB_DATABASE}}
 
-        - name: Run tests
-          run: npm test
+     DB_HOST: ${{secrets.DATABASE_HOST}}
 
-        - name: Build and Deploy
-          run: |
-          # Replace with your build and deployment commands
-            npm test
-          # Example deployment command: npm run deploy
+     DB_PASS: ${{secrets.DATABASE_PASSWORD}}
 
-        - name: Wait for MariaDB to be healthy
-          run: docker wait mariadb
+     DB_USER: ${{secrets.DATABASE_USER}}
 
-        - name: Cleanup MariaDB container
-          run: docker stop mariadb
+     DB_NAME: ${{secrets.DATABASE_NAME}}
+
+     DB_DIALECT: ${{secrets.DB_DIALECT}}
+
+     DB_POOL_MIN: ${{secrets.DB_POOL_MIN}}
+
+     DB_POOL_MAX: ${{secrets.DB_POOL_MAX}}
+
+     DB_POOL_ACQUIRE: ${{secrets.DB_POOL_ACQUIRE}}
+
+     DB_POOL_IDLE: ${{secrets.DB_POOL_IDLE}}
+
+     PORT: ${{secrets.PORT}}
+
+     USERS_CSV_PATH: ${{secrets.USERS_CSV_PATH}}
+
+ 
+
+   steps:
+
+     - name: Checkout code
+
+       uses: actions/checkout@v2
+
+ 
+
+     - name: Shutdown Ubuntu MySQL (SUDO)
+
+       run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
+
+ 
+
+     - name: Install MySQL
+
+       run: |
+
+         sudo apt-get update -qy
+
+         sudo apt-get install -qy mysql-server
+
+ 
+
+     - name: Start MySQL Service
+
+       run: sudo service mysql start
+
+ 
+
+     - name: Change MySQL Root Password
+
+       run: |
+
+        mysql -u $DB_USER -proot -e "ALTER USER '$DB_USER'@'$DB_HOST' IDENTIFIED BY '$DB_PASS'; FLUSH PRIVILEGES;"
+
+ 
+
+     - name: Create Database
+
+       run: |
+
+         mysql -h $DB_HOST -u $DB_USER -p$DB_PASS -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE"
+
+ 
+
+     - name: Install Node.js
+
+       uses: actions/setup-node@v2
+
+       with:
+
+         node-version: 14
+
+ 
+
+     - name: Install dependencies
+
+       run: npm install
+
+ 
+
+     - name: Run tests
+
+       run: npm test
+
+ 
