@@ -22,6 +22,24 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
+    - name: Start MariaDB
+      run: |
+        docker run -d --name mariadb \
+          -e MYSQL_ROOT_PASSWORD='Test@123' \
+          -e MYSQL_USER=root \
+          -e MYSQL_PASSWORD='Test@123' \
+          -e MYSQL_DATABASE=test \
+          -p 3306:3306 \
+          mariadb:latest
+      continue-on-error: true # Continue even if the container startup fails
+
+      - name: Wait for MariaDB to be healthy
+      run: |
+        timeout 60 bash -c \
+          'while [[ "$(docker inspect -f {{.State.Health.Status}} mariadb)" != "healthy" ]]; do
+            sleep 1; 
+            done'
+
       - name: Checkout code
         uses: actions/checkout@v2
 
