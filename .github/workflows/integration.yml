@@ -1,92 +1,50 @@
-name: MySQL GitHub Actions
+name: Integ-Testing
 
-on:
-  pull_request:
-    branches:
-      - main
+
+on: [pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Update
-      run : sudo apt-get update
-    - name: Setup MySQL
-      run: sudo apt install mysql-server -y
-    - name: restart mysql 
-      run: sudo service mysql restart
-    - name: mysql find
-      run: sudo ss -tap | grep mysql 
-    - name: creating database
-      run: sudo mysql -u root -e "CREATE DATABASE test"
-
-
-
-    - name: Checkout code
-
-      uses: actions/checkout@v2
-
- 
 
     - name: Set up Node.js
-
       uses: actions/setup-node@v2
-
       with:
-
         node-version: '14'
 
- 
-
     - name: Install Dependencies
-
       run: npm install
 
- 
-
     # - name: Wait for MySQL to be ready
-
     #   run: |
-
     #     n=0
-
     #     until [ $n -ge 5 ]
-
     #     do
-
     #       npm run db:migrate:up # Replace with your database migration command
-
     #       [ $? -eq 0 ] && break
-
     #       n=$[$n+1]
-
     #       sleep 15
-
     #     done
 
-    - name: install mocha 
-      run : npm install mocha
-
-
     - name: Run Tests
-
       env:
-
-        DB_HOST: 127.0.0.1
-
+        DB_HOST: localhost
         DB_PORT: 3306
-
         DB_USER: root
-
-        DB_PASSWORD: password
-
+        DB_PASSWORD: Test@123
         DB_NAME: test
-
       run: npm test
-      
-
-
-
-      
