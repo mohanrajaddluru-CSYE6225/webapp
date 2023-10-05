@@ -30,7 +30,7 @@ jobs:
         run: sudo service mysql start
 
       - name: Change MySQL Root Password
-        run: mysql -u $DATABASE_USER -p root -e "ALTER USER '$DATABASE_USER'@'$DATABASE_HOST' IDENTIFIED BY '$DATABASE_PASSWORD'; FLUSH PRIVILEGES;"
+        run: mysql -u $DATABASE_USER -p -e root "ALTER USER '$DATABASE_USER'@'$DATABASE_HOST' IDENTIFIED BY '$DATABASE_PASSWORD'; FLUSH PRIVILEGES;"
 
       - name: Create Database
         run: mysql -h $DATABASE_HOST -u $DATABASE_USER -p $DATABASE_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME"
