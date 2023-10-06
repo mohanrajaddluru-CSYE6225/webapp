@@ -40,6 +40,12 @@ jobs:
           echo "Waiting for MySQL..."
           sleep 1
         done
+
+    - name: Wait for MySQL to start
+      run: |
+        while ! mysqladmin ping -h 127.0.0.1 --user=root --password="${{ secrets.DATABASE_PASSWORD }}" --silent; do
+          sleep 1
+        done
     - name: Check and verify database existence
       run: |
         echo 'SHOW DATABASES;' | mysql --host=localhost --user=root --password=${{ secrets.DATABASE_PASSWORD }} | grep test
