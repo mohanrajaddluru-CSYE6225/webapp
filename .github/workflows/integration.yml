@@ -1,74 +1,48 @@
-name: Node.js
+name: Node.js CI with MySQL
 
 on:
-  workflow_dispatch:
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
-    name: webapp test
     runs-on: ubuntu-latest
 
     services:
       mysql:
         image: mysql:5.7
         env:
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_USER: ${{ secrets.DATABASE_USER }}
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: root_password
           MYSQL_DATABASE: test
-          PORT: ${{ secrets.PORT }} # Specify the name of the database to be created here
+          MYSQL_USER: ${{ secrets.DATABASE_USER }}
+          MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-    strategy:
-      matrix:
-        node-version: [19.2.0]
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Wait for MySQL to become available
-      run: |
-        for i in {1..30}; do
-          if echo 'SELECT 1' | mysql --host=localhost --user=root --password=${{ secrets.DATABASE_PASSWORD }} &> /dev/null; then
-            break
-          fi
-          echo "Waiting for MySQL..."
-          sleep 1
-        done
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: Wait for MySQL to become available 2.0
-      run: |
-        for i in {1..30}; do
-          if echo 'SELECT 1' | mysql --host=mysql --user=root --password=${{ secrets.DATABASE_PASSWORD }} &> /dev/null; then
-            break
-          fi
-          echo "Waiting for MySQL..."
-          sleep 1
-        done
-
-    - name: Wait for MySQL to start
-      run: |
-        while ! mysqladmin ping -h 127.0.0.1 --user=root --password="${{ secrets.DATABASE_PASSWORD }}" --silent; do
-          sleep 1
-        done
-    #- name: Check and verify database existence
-    #  run: |
-    #    echo 'SHOW DATABASES;' | mysql --host=localhost --user=root --password=${{ secrets.DATABASE_PASSWORD }} | grep test
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: install mocha
-      run: npm install mocha 
-    #- #name:   
-      #run: npm ci
-    - name: test run
+        node-version: '14' # Choose your desired Node.js version
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Install Mocha globally
+      run: npm install -g mocha
+
+    - name: check ip address
+      run: ip address
+
+    - name: Run Database Health Check
+      run: |
+        # Check database health using mysqladmin command
+        mysqladmin ping -h localhost -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} test
+
+    - name: Run  tests
       run: npm test
-env:
-  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
