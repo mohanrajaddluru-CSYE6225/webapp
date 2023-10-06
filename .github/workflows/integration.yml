@@ -13,8 +13,8 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ROOT_PASSWORD: root_password
-          MYSQL_DATABASE: test
+          #MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
           MYSQL_USER: ${{ secrets.DATABASE_USER }}
           MYSQL_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
         ports:
@@ -32,24 +32,22 @@ jobs:
     
     - name: Start MySQL Service
       run: sudo service mysql start
+
+    - name: check MySQL from ps
+      run: sudo ps -ef | grep mysql
+    
+    - name: 
     
     - name: Verify MySQL Port
       run: sudo netstat -tuln | grep 3306
     
     - name: check ip address
       run: ip address
-    
-    - name: Check MySQL Port
-      run: |
-        # Use 'ps' command to find the MySQL process and extract the listening port
-        MYSQL_PID=$(pgrep mysql)
-        MYSQL_PORT=$(sudo netstat -tuln -P | awk -v pid="$MYSQL_PID" '$6 == "LISTEN" && $7 == pid {print $4}')
-        echo "MySQL is running on port: $MYSQL_PORT"
 
     - name: Run Database Health Check
       run: |
         # Check database health using mysqladmin command
-        mysqladmin ping -h ${{ secrets.DATABASE_HOST }} -u ${{ secrets.DATABASE_USER }} -p ${{ secrets.DATABASE_PASSWORD }} -S /var/run/mysqld/mysqld.sock test
+        mysqladmin ping -h ${{ secrets.DATABASE_HOST }} -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -S /var/run/mysqld/mysqld.sock test
 
     - name: Debug MySQL Status
       run: mysql -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -e "SHOW STATUS"
