@@ -1,45 +1,56 @@
-name: Node api testing
+name: Node.js
 
 on:
+  workflow_dispatch:
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
-  api_test:
+  build:
+    name: webapp test
     runs-on: ubuntu-latest
-    env:
-        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-        DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-        DATABASE_USER: ${{ secrets.DATABASE_USER }}
-        PORT: ${{ secrets.PORT }}
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test
+          PORT: ${{ secrets.PORT }} # Specify the name of the database to be created here
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     strategy:
       matrix:
-        node-version: [18.x]
-        
+        node-version: [19.2.0]
+
     steps:
-      - name: Shutdown Ubuntu MySQL (SUDO)
-        run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
-
-      - name: Install MySQL
-        run: |
-          sudo apt-get update -qy
-          sudo apt-get install -qy mysql-server
-
-      - name: Start MySQL Service
-        run: sudo service mysql start
-
-      #- name: Change MySQL Root Password
-       # run: mysql -u $DATABASE_USER -p "$DATABASE_PASSWORD" -e "ALTER USER '$DATABASE_USER'@'$DATABASE_HOST' IDENTIFIED BY '$DATABASE_PASSWORD'; FLUSH PRIVILEGES;"
-
-      - name: Create Database
-        run: mysql -h $DATABASE_HOST -u $DATABASE_USER -p $DATABASE_PASSWORD -e "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME"
-
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: npm ci
-      - run: npm test -- --exit
+    - uses: actions/checkout@v3
+    - name: Wait for MySQL to become available
+      run: |
+        for i in {1..30}; do
+          if echo 'SELECT 1' | mysql --host=127.0.0.1 --user=root --password=root &> /dev/null; then
+            break
+          fi
+          echo "Waiting for MySQL..."
+          sleep 1
+        done
+    - name: Check and verify database existence
+      run: |
+        echo 'SHOW DATABASES;' | mysql --host=127.0.0.1 --user=root --password=root | grep csyedb
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - name: install mocha
+      run: npm install mocha 
+    #- #name:   
+      #run: npm ci
+    - name: test run
+      run: npm test
