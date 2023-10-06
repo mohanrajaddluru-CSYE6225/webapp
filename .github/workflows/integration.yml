@@ -41,6 +41,16 @@ jobs:
           sleep 1
         done
 
+    - name: Wait for MySQL to become available 2.0
+      run: |
+        for i in {1..30}; do
+          if echo 'SELECT 1' | mysql --host=mysql --user=root --password=${{ secrets.DATABASE_PASSWORD }} &> /dev/null; then
+            break
+          fi
+          echo "Waiting for MySQL..."
+          sleep 1
+        done
+
     - name: Wait for MySQL to start
       run: |
         while ! mysqladmin ping -h 127.0.0.1 --user=root --password="${{ secrets.DATABASE_PASSWORD }}" --silent; do
