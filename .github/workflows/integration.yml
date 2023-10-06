@@ -30,6 +30,14 @@ jobs:
       with:
         node-version: '14' # Choose your desired Node.js version
 
+    - name: Run Database Health Check
+      run: |
+        # Check database health using mysqladmin command
+        mysqladmin ping -h localhost -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -S /var/run/mysqld/mysqld.sock testdb
+
+    - name: Debug MySQL Status
+      run: mysql -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -e "SHOW STATUS"
+
     - name: Install dependencies
       run: npm install
 
