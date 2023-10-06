@@ -34,7 +34,7 @@ jobs:
     - name: Wait for MySQL to become available
       run: |
         for i in {1..30}; do
-          if echo 'SELECT 1' | mysql --host=127.0.0.1 --user=root --password=root &> /dev/null; then
+          if echo 'SELECT 1' | mysql --host=127.0.0.1 --user=root --password=$DATABASE_PASSWORD &> /dev/null; then
             break
           fi
           echo "Waiting for MySQL..."
@@ -42,7 +42,7 @@ jobs:
         done
     - name: Check and verify database existence
       run: |
-        echo 'SHOW DATABASES;' | mysql --host=127.0.0.1 --user=root --password=root | grep csyedb
+        echo 'SHOW DATABASES;' | mysql --host=127.0.0.1 --user=root --password=$DATABASE_PASSWORD | grep test
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
@@ -54,3 +54,5 @@ jobs:
       #run: npm ci
     - name: test run
       run: npm test
+env:
+  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
