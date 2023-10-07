@@ -44,10 +44,17 @@ jobs:
     - name: check ip address
       run: ip address
 
-    #- name: Run Database Health Check
-    #  run: |
-    #    # Check database health using mysqladmin command
-    #    mysqladmin ping -h ${{ secrets.DATABASE_HOST }} -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -S /var/run/mysqld/mysqld.sock test
+    - name: Check MySQL Port
+      run: |
+        # Use 'ps' command to find the MySQL process and extract the listening port
+        MYSQL_PID=$(pgrep mysql)
+        MYSQL_PORT=$(sudo netstat -tuln -P | awk -v pid="$MYSQL_PID" '$6 == "LISTEN" && $7 == pid {print $4}')
+        echo "MySQL is running on port: $MYSQL_PORT"
+
+    - name: Run Database Health Check
+      run: |
+        # Check database health using mysqladmin command
+        mysqladmin ping -h ${{ secrets.DATABASE_HOST }} -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -S /var/run/mysqld/mysqld.sock test
 
     - name: Debug MySQL Status
       run: mysql -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -e "SHOW STATUS"
