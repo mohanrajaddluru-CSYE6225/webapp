@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Wait for MySQL to become available
-      run: sudo systemctl start mysql && sudo mysql -u root -p root -e "CREATE DATABASE test"
+      run: sudo systemctl start mysql && sudo mysql -u root -proot -e "CREATE DATABASE test"
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
