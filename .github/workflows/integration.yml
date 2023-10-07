@@ -16,10 +16,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Mysql start
+      run: sudo systemctl start mysql
     - name: Mysql status
       run: sudo systemctl status mysql
     - name: Wait for MySQL to become available
-      run: sudo systemctl start mysql && sudo mysql -u root -proot -e "CREATE DATABASE test"
+      run: sudo mysql -u root -proot -e "CREATE DATABASE test"
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
