@@ -45,4 +45,5 @@ jobs:
         cache: 'npm'
     - run: npm install mocha
     - run: npm ci
+    - run: ip address
     - run: npm run test
