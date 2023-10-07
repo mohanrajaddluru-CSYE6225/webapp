@@ -44,10 +44,10 @@ jobs:
     - name: check ip address
       run: ip address
 
-    - name: Run Database Health Check
-      run: |
-        # Check database health using mysqladmin command
-        mysqladmin ping -h ${{ secrets.DATABASE_HOST }} -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -S /var/run/mysqld/mysqld.sock test
+    #- name: Run Database Health Check
+    #  run: |
+    #    # Check database health using mysqladmin command
+    #    mysqladmin ping -h ${{ secrets.DATABASE_HOST }} -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -S /var/run/mysqld/mysqld.sock test
 
     - name: Debug MySQL Status
       run: mysql -u ${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -e "SHOW STATUS"
