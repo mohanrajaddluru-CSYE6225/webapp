@@ -10,16 +10,6 @@ jobs:
     name: webapp test
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: Test@123
-          MYSQL_DATABASE: test # Specify the name of the database to be created here
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     strategy:
       matrix:
         node-version: [19.2.0]
@@ -27,17 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Wait for MySQL to become available
-      run: |
-        for i in {1..30}; do
-          if echo 'SELECT 1' | mysql --host=127.0.0.1 --user=root --password=Test@123 &> /dev/null; then
-            break
-          fi
-          echo "Waiting for MySQL..."
-          sleep 1
-        done
-    - name: Check and verify database existence
-      run: |
-        echo 'SHOW DATABASES;' | mysql --host=127.0.0.1 --user=root --password=Test@123 | grep test
+      run: sudo systemctl start mysql && sudo mysql -u root -p root -e "CREATE DATABASE test"
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
