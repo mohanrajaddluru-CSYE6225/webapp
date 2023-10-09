@@ -30,4 +30,6 @@ jobs:
     - run: npm install mocha
     - run: npm ci
     - run: ip address
+    - name: grant permissions for root
+      run: sudo mysql -u root -proot -e GRANT ALL PRIVILEGES ON test.* TO 'root'@'localhost';
     - run: npm run test
