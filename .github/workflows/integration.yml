@@ -31,6 +31,8 @@ jobs:
             echo "Waiting for MySQL to be ready..."
             sleep 5
           done
+      - name: install mocha
+        run: npm install mocha
       - name: Install project dependencies
         run: npm install
       - name: Run Integration tests
