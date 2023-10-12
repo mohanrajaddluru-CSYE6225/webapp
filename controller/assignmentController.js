@@ -55,29 +55,31 @@ const getAssignmentbyID = async (req,res) => {
 
 const getUserAssignments = async(req,res) => 
 {
-  const authorizationHeader = req.headers.authorization;
-
-  if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
-      sendResponse(res,401, "Un authenticated, authentication required");
-    }
+  if((Object.keys(req.body).length > 0) || (Object.keys(req.query).length > 0))
+  {
+    return res.status(400).json();
+  }
   else
   {
-      const currentUser = await validateUser(authorizationHeader);
-      if (currentUser)
-      {
-          var assignmentListForCurrentUser = await currUserAsignments(currentUser)
+    const authorizationHeader = req.headers.authorization;
 
-          var currUserDetailAsignments = await Assignment.findAll({
-            where: {
-                id: {
-                    [Op.in] : assignmentListForCurrentUser
-                }
-            }});
-          sendResponse(res,200,currUserDetailAsignments);
+    if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
+        sendResponse(res,401, "Un authenticated, authentication required");
       }
-      else{
-        sendResponse(res,401,"Un authenticated, authentication required");
-      }
+    else
+    {
+        const currentUser = await validateUser(authorizationHeader);
+        if (currentUser)
+        {
+            //var assignmentListForCurrentUser = await currUserAsignments(currentUser)
+
+            var currUserDetailAsignments = await Assignment.findAll({});
+            sendResponse(res,200,currUserDetailAsignments);
+        }
+        else{
+          sendResponse(res,401,"Un authenticated, authentication required");
+        }
+    }
   }
 }
 

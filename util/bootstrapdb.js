@@ -73,7 +73,7 @@ async function bootstrapDatabase() {
       console.log('Connected to the database');
       //const pendingMigrations = await sequelize.getMigrator().findPending();
       await sequelize.sync();
-      await 
+      //await 
       //processCSVFile();
       //await sequelize.UserSchema.sync({alter: true})
       //await sequelize.AssignmentSchema.sync({alter: true})
