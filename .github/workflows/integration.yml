@@ -9,11 +9,12 @@ jobs:
   Test-Integration:
     runs-on: ubuntu-latest
     env:
-      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-      DATABASE_USER: ${{ secrets.DATABASE_USER }}
-      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-      PORT: ${{ secrets.PORT }}
-      MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
+      DATABASE_HOST: ${{ vars.DATABASE_HOST}}
+      DATABASE_NAME: ${{ vars.DATABASE_NAME }}
+      DATABASE_USER: ${{ vars.DATABASE_USER }}
+      DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}
+      PORT: ${{ vars.PORT }}
+      MYSQL_DATABASE: ${{ vars.DATABASE_NAME }}
     services:
       mysqldb:
         image: mysql:5.7
@@ -28,8 +29,6 @@ jobs:
       - name: Checkout Webapp Code
         uses: actions/checkout@v4
       
-      - run: echo "name is ${{ vars.DATABASE_HOST}}"
-      
       - name: print env variables
         run: printenv
 
@@ -41,25 +40,12 @@ jobs:
       
       - name: downloading npm packages
         run: npm install
-      
-      - name: printing the variables
-        run: |
-          echo ${{ env.DATABASE_HOST}}
-          echo ${{ env.DATABASE_USER}}
-          echo ${{ env.DATABASE_PASSWORD}}
 
       - name: Verify MySQL connection from container 
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-client
-          sudo mysql --host `${{ env.DATABASE_HOST }}` -u`${{ env.DATABASE_USER }}` -p`${{ env.DATABASE_PASSWORD }}` -e "SHOW DATABASES"
-      
-      - name: printing the variables
-        run: |
-          echo $DATABASE_HOST
-          echo $DATABASE_USER
-          echo $DATABASE_PASSWORD
-
+          sudo mysql --host DATABASE_HOST -u DATABASE_USER -pDATABASE_PASSWORD -e "SHOW DATABASES"
       
       #- name: install sequelize and mysql2
       #  run: npm install sequelize mysql2 
