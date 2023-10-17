@@ -28,7 +28,7 @@ jobs:
       - name: Checkout Webapp Code
         uses: actions/checkout@v4
       
-      - run: echo "name is ${{ var.DATABASE_HOST}}"
+      - run: echo "name is ${{ vars.DATABASE_HOST}}"
       
       - name: print env variables
         run: printenv
