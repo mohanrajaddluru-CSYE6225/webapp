@@ -41,16 +41,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-client
-          sudo mysql --host ${{ secrets.DATABASE_HOST }} -u${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -e "SHOW DATABASES"
+          sudo mysql --host ${{ env.DATABASE_HOST }} -u${{ env.DATABASE_USER }} -p${{ env.DATABASE_PASSWORD }} -e "SHOW DATABASES"
       
       #- name: install sequelize and mysql2
       #  run: npm install sequelize mysql2 
       
       - name: start node application
         env:
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          DATABASE_USER: ${{ secrets.DATABASE_USER }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-          PORT: ${{ secrets.PORT }}
+          DATABASE_NAME: ${{ env.DATABASE_NAME }}
+          DATABASE_USER: ${{ env.DATABASE_USER }}
+          DATABASE_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          DATABASE_HOST: ${{ env.DATABASE_HOST }}
+          PORT: ${{ env.PORT }}
         run: npm test
