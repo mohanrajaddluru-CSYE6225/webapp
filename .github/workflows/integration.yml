@@ -28,6 +28,10 @@ jobs:
     steps:
       - name: Checkout Webapp Code
         uses: actions/checkout@v4
+      
+      - name: print env variables
+        run: printenv
+
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
@@ -47,7 +51,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-client
-          sudo mysql --host ${{ env.DATABASE_HOST }} -u${{ env.DATABASE_USER }} -p${{ env.DATABASE_PASSWORD }} -e "SHOW DATABASES"
+          sudo mysql --host `${{ env.DATABASE_HOST }}` -u`${{ env.DATABASE_USER }}` -p`${{ env.DATABASE_PASSWORD }}` -e "SHOW DATABASES"
       
       - name: printing the variables
         run: |
