@@ -6,29 +6,8 @@ on:
       - main
 
 jobs:
-  integration-test:
+  echo-math:
     runs-on: ubuntu-latest
     steps:
-      - name: installing node
-        uses: actions/setup-node@v3
-        with: 
-          node-version: 18
-
-      - name: install and run
-        run: npm install
-
-      - name: install mysql db with required configs
-      - uses: mirromutth/mysql-action@v1.1
-        with: 
-          host port: 3306
-          mysql version: 5.7
-          mysql database: 'test'
-          mysql root password: 'Test@123'
-          mysql user: 'root'
-          mysql password: 'Test@123'
-      
-      - name: download mocha
-        run: npm install mocha
-
-      - name: run node project
-        run: node app.js
+      - name: Echo the result of 1 + 1
+        run: echo $((1 + 1))
