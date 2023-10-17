@@ -43,6 +43,13 @@ jobs:
           sudo apt-get install -y mysql-client
           sudo mysql --host ${{ env.DATABASE_HOST }} -u${{ env.DATABASE_USER }} -p${{ env.DATABASE_PASSWORD }} -e "SHOW DATABASES"
       
+      - name: printing the variables
+        run: |
+          echo $DATABASE_HOST
+          echo $DATABASE_USER
+          echo $DATABASE_PASSWORD
+          
+      
       #- name: install sequelize and mysql2
       #  run: npm install sequelize mysql2 
       
