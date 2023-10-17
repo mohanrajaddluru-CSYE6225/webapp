@@ -32,5 +32,15 @@ jobs:
           mysql root password: 'Test@123'
           mysql user: 'root'
           mysql password: 'Test@123'
+      
+      - name: starting the webapp application
+        env:
+          DATABASE_NAME: test
+          DATABASE_USER: root
+          DATABASE_PASSWORD: Test@123
+          DATABASE_HOST: 127.0.0.1
+        run: node -v
+        run: node app.js
+
 
             
