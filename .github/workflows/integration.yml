@@ -26,11 +26,11 @@ jobs:
           node-version: 18
         
       - name: Install Node packages
-      - run: npm ci
+        run: npm ci
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 3306
           DB_USER: root
           DB_PASSWORD: 'Test@123'
           DB_NAME: testdb
-      - run: npm test
+        run: npm test
