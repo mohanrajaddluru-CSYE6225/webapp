@@ -59,6 +59,10 @@ jobs:
     - name: Install Dependencies
 
       run: npm install
+    
+    - name: Install mocha
+
+      run: npm install mocha
 
  
 
