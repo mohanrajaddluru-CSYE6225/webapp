@@ -24,10 +24,10 @@ jobs:
         run: npm install
       
       - name: Shutdown Ubuntu MySQL (SUDO)
-        run: sudo service mysql stop
+        run: sudo service mysql status
 
-      - name: creating mysql configurations
-        uses: mirromutth/mysql-action@v1.1
+      #- name: creating mysql configurations
+      #  uses: mirromutth/mysql-action@v1.1
       
       - name: install mocha
         run: npm install mocha
