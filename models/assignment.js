@@ -19,6 +19,10 @@ function validateAttempts(value)
   {
     throw new Error('Attempts must be from 1 to 100');
   }
+  if (!Number.isInteger(value))
+  {
+    throw new Error('Number of attempts must be an integer.');
+  }
   return true;
 }
 

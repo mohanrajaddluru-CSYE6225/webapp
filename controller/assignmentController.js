@@ -15,9 +15,7 @@ const sendResponse = (res, statusCode, message) => {
 
 const getAssignmentbyID = async (req,res) => {
   const authorizationHeader = req.headers.authorization;
-
-  //setCustomHeaders(res);
-
+  
     if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
        sendResponse(res,401);
       }
@@ -27,21 +25,12 @@ const getAssignmentbyID = async (req,res) => {
         const currentUser = await validateUser(authorizationHeader);
         if (currentUser)
         {
-            var assignmentListForCurrentUser = await currUserAsignments(currentUser)
-            const index = assignmentListForCurrentUser.indexOf(req.params.id);
-            if (index !== -1)
-            {
-              const currentAssignment = await Assignment.findAll({
-                where : {
-                  id : req.params.id
-                }
-              })
-              sendResponse(res,200,currentAssignment);
+          const currentAssignment = await Assignment.findAll({
+            where : {
+              id : req.params.id
             }
-            else
-            {
-              sendResponse(res,403,"Data restricted for the user");
-            }
+          })
+          sendResponse(res,200,currentAssignment);
         }
         else{
           sendResponse(res,401);
@@ -65,17 +54,11 @@ const getUserAssignments = async(req,res) =>
       const currentUser = await validateUser(authorizationHeader);
       if (currentUser)
       {
-          var assignmentListForCurrentUser = await currUserAsignments(currentUser)
-
-          var currUserDetailAsignments = await Assignment.findAll({
-            where: {
-                id: {
-                    [Op.in] : assignmentListForCurrentUser
-                }
-            }});
-          sendResponse(res,200,currUserDetailAsignments);
+          var allAssignments = await Assignment.findAll({})
+          sendResponse(res,200,allAssignments);
       }
-      else{
+      else
+      {
         sendResponse(res,401,"Un authenticated, authentication required");
       }
   }
@@ -267,11 +250,11 @@ const validateUser = async (authorizationHeader) => {
       console.error('Error while validating user:', error);
       return 0;
     }
-  };
+};
 
 
 
-  const currUserAsignments = async(presentUser) => {
+const currUserAsignments = async(presentUser) => {
     //console.log("inside current user assignment")
 
     var curr_assignment = await AssignmentCreator.findAll({
