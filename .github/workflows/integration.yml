@@ -6,7 +6,7 @@ on:
       -main
 
 jobs:
-  Node Setup:
+  integration-testing:
     runs-on: ubuntu-latest
     name: Setup Node Environment and test npm
     steps:
