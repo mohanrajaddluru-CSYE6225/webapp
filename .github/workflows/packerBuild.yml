@@ -28,16 +28,9 @@ jobs:
 
       - name: git checkout current repo code and only root files
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: .
 
       - name: check working directory
         run: pwd | ls -la
-      
-      #- name: remove webapp already exists
-      #  run: sudo rm webapp*
-      - name: add touch file
-        run: touch touchtext.txt
 
       - name: check for available files 2.0
         run: ls -la
