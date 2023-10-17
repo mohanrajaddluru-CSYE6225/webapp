@@ -1,6 +1,6 @@
 variable "ami_name" {
   type    = string
-  default   = "test123"
+  default = "test123"
 }
 variable "ami_region" {
   type    = string
