@@ -12,7 +12,6 @@ jobs:
       DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
       DATABASE_USER: ${{ secrets.DATABASE_USER }}
       DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
       PORT: ${{ secrets.PORT }}
       MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
     services:
