@@ -8,9 +8,33 @@ const { User,Assignment,AssignmentCreator } = require('../models/index.js');
 const { getAssignmentbyID, getUserAssignments, postAssignment, removeAssignment, updateAssignment } = require('../controller/assignmentController.js');
 
 
+function isEmptyRequest(req, res, next) {
+    if (Object.keys(req.body).length === 0 && Object.keys(req.params).length === 0) 
+    {
+        next();
+    }
+    else
+    {
+        return res.status(400).json();
+    }
+}
+
+function isGetIDEmptyRequest(req, res, next) {
+    if (Object.keys(req.body).length === 0) 
+    {
+        next();
+    }
+    else
+    {
+        return res.status(400).json();
+    }
+}
 
 
-router.get('/',getUserAssignments).get('/:id', getAssignmentbyID);
+
+
+
+router.get('/',isEmptyRequest, getUserAssignments).get('/:id',isGetIDEmptyRequest,getAssignmentbyID);
 
 router.post('/',postAssignment);
 

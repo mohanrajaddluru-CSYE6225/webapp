@@ -42,8 +42,8 @@ jobs:
           sudo apt-get install -y mysql-client
           sudo mysql --host 127.0.0.1 -uroot -pTest@123 -e "SHOW DATABASES"
       
-      - name: install sequelize and mysql2
-        run: npm install sequelize mysql2 mocha
+      #- name: install sequelize and mysql2
+      #  run: npm install sequelize mysql2 
       
       - name: start node application
         env:
