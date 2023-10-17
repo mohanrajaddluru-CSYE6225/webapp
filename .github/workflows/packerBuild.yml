@@ -1,0 +1,78 @@
+name: Run packer build on a template file
+
+on:
+  push:
+    branches:
+        - main
+env:
+  PRODUCT_VERSION: "1.9.4"
+  ami_name: ${{ secrets.AMI_NAME }}
+  ami_region: ${{ secrets.AMI_REGION }}
+  login_username: ${{ secrets.LOGIN_USERNAME }}
+  typeOfInstance: ${{ secrets.TYPEOFINSTANCE }}
+  sourceAMIOwner: ${{ secrets.SOURCEAMIOWNER }}
+  AMIsharedOwnerID: ${{ secrets.AMISHAREDOWNERID }}
+
+
+
+jobs:
+  packer_build:
+    runs-on: ubuntu-latest
+    name: Build AMI Image
+    steps:
+      - name: print console log
+        run: echo 'started packer build yml'
+
+      - name: check working directory
+        run: pwd
+
+      - name: git checkout current repo code and only root files
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .
+
+      - name: check working directory
+        run: pwd | ls -la
+      
+      #- name: remove webapp already exists
+      #  run: sudo rm webapp*
+      - name: add touch file
+        run: touch touchtext.txt
+
+      - name: check for available files 2.0
+        run: ls -la
+        
+      - name: zip the file
+        uses: thedoctor0/zip-release@0.7.1
+        with:
+          type: 'zip'
+          filename: 'webapp.zip'
+          exclusions: '*.git* /*node_modules/* '
+        
+      - name: Again check for available files
+        run: ls -la
+      
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: ${{ env.PRODUCT_VERSION }}
+
+      - name: Check version of packer
+        run: packer -v
+      
+      - name: Add required plugins
+        run: packer init .
+
+      - name: format packer content
+        run: packer fmt .
+      
+      - name: validate packer
+        run: packer validate .
+      
+      - name: packer build
+        run: packer build aws-ubuntu.pkr.hcl
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1

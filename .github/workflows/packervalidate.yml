@@ -1,0 +1,47 @@
+name: Packer Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+env:
+  PRODUCT_VERSION: "1.9.4"
+  ami_name: ${{ secrets.AMI_NAME }}
+  ami_region: ${{ secrets.AMI_REGION }}
+  login_username: ${{ secrets.LOGIN_USERNAME }}
+  typeOfInstance: ${{ secrets.TYPEOFINSTANCE }}
+  sourceAMIOwner: ${{ secrets.SOURCEAMIOWNER }}
+  AMIsharedOwnerID: ${{ secrets.AMISHAREDOWNERID }}
+
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    name: Run Packer
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: ${{ env.PRODUCT_VERSION }}
+
+      - name: Run `packer init`
+        id: init
+        run: "packer init ."
+
+      - name: Run packer fmt
+        run: |
+          if ! packer fmt -check aws-ubuntu.pkr.hcl; then
+            echo "Packer template is not properly formatted. Please run 'packer fmt' locally and commit the changes."
+            exit 1
+          fi
+
+      - name: Run packer validate
+        run: |
+          if ! packer validate aws-ubuntu.pkr.hcl; then
+            echo "Packer template validation failed. Please fix the issues and try again."
+            exit 1
+          fi
