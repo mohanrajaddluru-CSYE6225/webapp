@@ -8,10 +8,12 @@ on:
 jobs:
   integration-test:
     runs-on: ubuntu-latest
+    steps:
     - name: installing node
-    - uses: actions/setup-node@v3
+      uses: actions/setup-node@v3
       with: 
         node-version: 18
     - name: install and run
-    - run: npm ci
-    - run: npm test
+      run: |
+        npm ci
+        npm test
