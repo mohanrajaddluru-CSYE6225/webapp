@@ -20,5 +20,17 @@ jobs:
         with:
           node-version: 18
       
-      - run: npm install
+      - name: downloading npm packages
+        run: npm install
+
+      - name: creating mysql configurations
+        uses: mirromutth/mysql-action@v1.1
+        with: 
+          host: 3306
+          mysql version: 5.7
+          mysql database: 'test'
+          mysql root password: 'Test@123'
+          mysql user: 'root'
+          mysql password: 'Test@123'
+
             
