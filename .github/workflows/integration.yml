@@ -26,9 +26,3 @@ jobs:
           mysql root password: 'Test@123'
           mysql user: 'root'
           mysql password: 'Test@123'
-      
-      - name: download mocha
-        run: npm install mocha
-
-      - name: run node project
-        run: node app.js
