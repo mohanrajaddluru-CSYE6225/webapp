@@ -8,7 +8,7 @@ on:
 jobs:
   Test-Integration:
     runs-on: ubuntu-latest
-    run: echo "name is $DATABASE_HOST"
+    - run: echo "name is $DATABASE_HOST"
     env:
       DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
       DATABASE_USER: ${{ secrets.DATABASE_USER }}
