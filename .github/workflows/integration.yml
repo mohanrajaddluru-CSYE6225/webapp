@@ -12,28 +12,32 @@ jobs:
       DATABASE_HOST: ${{ vars.DATABASE_HOST}}
       DATABASE_NAME: ${{ vars.DATABASE_NAME }}
       DATABASE_USER: ${{ vars.DATABASE_USER }}
-      DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}
+      DATABASE_PASSWORD: ''
       PORT: ${{ vars.PORT }}
       MYSQL_DATABASE: ${{ vars.DATABASE_NAME }}
-    services:
-      mysqldb:
-        image: mysql:5.7
-        ports:
-          - 3306:3306
-        env:
-          MYSQL_ROOT_HOST: '%'
-          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-          MYSQL_ROOT_PASSWORD: ''
-          MYSQL_DATABASE: $MYSQL_DATABASE
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=30s --health-retries=5
-
+    # services:
+    #   mysqldb:
+    #     image: mysql:5.7
+    #     ports:
+    #       - 3306:3306
+    #     env:
+    #       MYSQL_ROOT_HOST: '%'
+    #       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    #       MYSQL_ROOT_PASSWORD: ''
+    #       MYSQL_DATABASE: $MYSQL_DATABASE
+    #     options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=30s --health-retries=5
     steps:
       - name: Checkout Webapp Code
         uses: actions/checkout@v4
       
+      - name: setup mysql
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-client
+          mysql --host $DATABASE_HOST -u $DATABASE_USER -p$DATABASE_PASSWORD -e "SHOW DATABASES"
+
       - name: print env variables
         run: printenv
-
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
