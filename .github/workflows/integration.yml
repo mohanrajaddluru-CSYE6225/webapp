@@ -9,19 +9,19 @@ jobs:
   Test-Integration:
     runs-on: ubuntu-latest
     env:
-      DATABASE_NAME: 'test'
-      DATABASE_USER: 'root'
-      DATABASE_PASSWORD: 'Test@123'
-      DATABASE_HOST: '127.0.0.1'
-      PORT: '8080'
+      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      PORT: ${{ secrets.PORT }}
     services:
       mysqldb:
         image: mysql:5.7
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_PASSWORD: Test@123
-          MYSQL_DATABASE: test
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DATABASE_NAME }}
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=30s --health-retries=5
 
     steps:
@@ -40,16 +40,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-client
-          sudo mysql --host 127.0.0.1 -uroot -pTest@123 -e "SHOW DATABASES"
+          sudo mysql --host ${{ secrets.DATABASE_HOST }} -u${{ secrets.DATABASE_USER }} -p${{ secrets.DATABASE_PASSWORD }} -e "SHOW DATABASES"
       
       #- name: install sequelize and mysql2
       #  run: npm install sequelize mysql2 
       
       - name: start node application
         env:
-          DATABASE_NAME: 'test'
-          DATABASE_USER: 'root'
-          DATABASE_PASSWORD: 'Test@123'
-          DATABASE_HOST: '127.0.0.1'
-          PORT: '8080'
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          PORT: ${{ secrets.PORT }}
         run: npm test
