@@ -11,7 +11,7 @@ jobs:
     env:
       database: test
       username: root
-      password: root
+      password: Test@123
       host: 127.0.0.1
       PORT: 8080
     services:
@@ -20,7 +20,7 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: Test@123
           MYSQL_DATABASE: test
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=30s --health-retries=5
 
