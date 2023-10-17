@@ -31,4 +31,10 @@ jobs:
       run: npm install mocha
 
     - name: run node project
+      env: 
+        database: test
+        username: root
+        password: Test@123
+        host: 127.0.0.1
       run: node app.js
+
