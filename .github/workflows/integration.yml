@@ -22,16 +22,13 @@ jobs:
       
       - name: downloading npm packages
         run: npm install
+      
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop
 
       - name: creating mysql configurations
         uses: mirromutth/mysql-action@v1.1
         with: 
-          host: 3306
-          mysql version: 5.7
-          mysql database: 'test'
-          mysql root password: 'Test@123'
-          mysql user: 'root'
-          mysql password: 'Test@123'
       
       - name: install mocha
         run: npm install mocha
@@ -39,9 +36,9 @@ jobs:
       - name: starting the webapp application
         run: npm test
         env:
-          DATABASE_NAME: test
+          DATABASE_NAME: sys
           DATABASE_USER: root
-          DATABASE_PASSWORD: Test@123
+          DATABASE_PASSWORD: root
           DATABASE_HOST: 127.0.0.1
           PORT: 8080
 
