@@ -34,6 +34,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-client
+          sudo systemctl status mysql
+          sudo systemctl restart mysql
+          sudo systemctl status mysql
           mysql --host $DATABASE_HOST -u $DATABASE_USER -p$DATABASE_PASSWORD -e "SHOW DATABASES"
 
       - name: print env variables
