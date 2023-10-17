@@ -45,7 +45,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-client
-          sudo mysql --host $DATABASE_HOST -u $DATABASE_USER -e "SHOW DATABASES"
+          sudo mysql --host 127.0.0.1 -u root -e "SHOW DATABASES"
       
       #- name: install sequelize and mysql2
       #  run: npm install sequelize mysql2 
