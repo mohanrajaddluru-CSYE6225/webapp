@@ -39,9 +39,9 @@ jobs:
       
       - name: printing the variables
         run: |
-          echo $DATABASE_HOST
-          echo $DATABASE_USER
-          echo $DATABASE_PASSWORD
+          echo ${{ env.DATABASE_HOST}}
+          echo ${{ env.DATABASE_USER}}
+          echo ${{ env.DATABASE_PASSWORD}}
 
       - name: Verify MySQL connection from container 
         run: |
