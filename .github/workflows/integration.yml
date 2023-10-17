@@ -28,7 +28,6 @@ jobs:
 
       - name: creating mysql configurations
         uses: mirromutth/mysql-action@v1.1
-        with: 
       
       - name: install mocha
         run: npm install mocha
