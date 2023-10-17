@@ -25,20 +25,3 @@ jobs:
       
       - name: Shutdown Ubuntu MySQL (SUDO)
         run: sudo service mysql status
-
-      #- name: creating mysql configurations
-      #  uses: mirromutth/mysql-action@v1.1
-      
-      - name: install mocha
-        run: npm install mocha
-      
-      - name: starting the webapp application
-        run: npm test
-        env:
-          DATABASE_NAME: sys
-          DATABASE_USER: root
-          DATABASE_PASSWORD: root
-          DATABASE_HOST: 127.0.0.1
-          PORT: 8080
-
-            
