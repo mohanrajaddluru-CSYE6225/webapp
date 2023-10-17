@@ -6,8 +6,16 @@ on:
       - main
 
 jobs:
-  echo-math:
+  Test-Integration:
     runs-on: ubuntu-latest
     steps:
       - name: Echo the result of 1 + 1
         run: echo $((1 + 1))
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.8.1
+        with:
+          node-version: 18
+      
+      - run: npm install
+            
