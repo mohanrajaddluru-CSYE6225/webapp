@@ -8,17 +8,32 @@ on:
 jobs:
   Test-Integration:
     runs-on: ubuntu-latest
+    env:
+      database: test
+      username: root
+      password: root
+      host: 127.0.0.1
+    services:
+      mysql:
+        image: mysql:5.7
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.0
-            
-      - name: Echo the result of 1 + 1
-        run: echo $((1 + 1))
+      - name: Checkout Webapp Code
+        uses: actions/checkout@v4
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v3.8.1
+        uses: actions/setup-node@v3
         with:
           node-version: 18
       
       - name: downloading npm packages
         run: npm install
+      
+      - name: start node application
+        run: node app.js
