@@ -1,36 +1,57 @@
-name: Integration-Testing
+name: CI/CD test
+
+ 
 
 on:
   pull_request:
     branches:
-      -main
+      - main
+
+ 
 
 jobs:
-  integration-testing:
+  integration-test:
     runs-on: ubuntu-latest
-    name: Setup Node Environment and test npm
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: 'Bitspilani18#'
+          MYSQL_DATABASE: 'testing'
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
-      - name: Set up MySQL
-        uses: mirromutth/mysql-action@v1.1
-        with:
-          host port: 3306
-          mysql version: '5.7'
-          mysql database: 'testdb'
-          mysql root password: 'Test@123'
-          mysql user: root
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-      - name: Setup Node js
-        uses: actions/checkout@v3
+ 
+
+      - name: Run Node.js project
         uses: actions/setup-node@v3
         with:
-          node-version: 18
-        
-      - name: Install Node packages
-        run: npm ci
-        env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_USER: root
-          DB_PASSWORD: 'Test@123'
-          DB_NAME: testdb
-        run: npm test
+          node-version: 20
+
+ 
+
+      - name: Wait for MySQL to be ready
+        run: |
+          until nc -z -v -w30 localhost 3306
+          do
+            echo "Waiting for MySQL to be ready..."
+            sleep 5
+          done
+
+ 
+
+      - name: Install project dependencies
+        run: |
+          cd Sriram_Voruganti_002778721#-final
+          npm install
+
+ 
+
+      - name: Run Integration tests 
+        run: |
+         cd Sriram_Voruganti_002778721#-final
+         npm test
