@@ -39,7 +39,7 @@ source "amazon-ebs" "debian" {
   ami_description = "AMI for Webapp"
   source_ami_filter {
     filters = {
-      name                = "debian-12-*-amd64-*"
+      name                = "debian-12-amd64-*"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
