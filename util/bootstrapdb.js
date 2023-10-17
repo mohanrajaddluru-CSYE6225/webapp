@@ -71,12 +71,7 @@ async function bootstrapDatabase() {
     try {
       await sequelize.authenticate();
       console.log('Connected to the database');
-      //const pendingMigrations = await sequelize.getMigrator().findPending();
-      await sequelize.sync();
-      await 
-      //processCSVFile();
-      //await sequelize.UserSchema.sync({alter: true})
-      //await sequelize.AssignmentSchema.sync({alter: true})
+      await sequelize.sync(); 
       console.log('Database bootstrapped successfully');
       return true;
     } 
