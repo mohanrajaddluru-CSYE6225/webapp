@@ -1,6 +1,6 @@
 variable "ami_name" {
   type    = string
-  default = "test123"
+  default   = "test123"
 }
 variable "ami_region" {
   type    = string
@@ -32,7 +32,7 @@ packer {
 }
 
 source "amazon-ebs" "debian" {
-  ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
+  ami_name        = "csye6225_V1_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   instance_type   = "${var.typeOfInstance}"
   region          = "${var.ami_region}"
   ssh_username    = "${var.login_username}"
