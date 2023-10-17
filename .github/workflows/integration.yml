@@ -8,7 +8,7 @@ on:
 jobs:
   Node Setup:
     runs-on: ubuntu-latest
-    name: Setup Node Environment and test npm
+    name: Integration Test
     steps:
       - name: Set up MySQL
         uses: mirromutth/mysql-action@v1.1
