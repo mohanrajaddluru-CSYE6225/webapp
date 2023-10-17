@@ -34,3 +34,4 @@ jobs:
           DB_PASSWORD: 'Test@123'
           DB_NAME: testdb
         run: npm test
+
