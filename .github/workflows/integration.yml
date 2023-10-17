@@ -9,10 +9,10 @@ jobs:
   Test-Integration:
     runs-on: ubuntu-latest
     env:
-      database: 'test'
-      username: 'root'
-      password: 'Test@123'
-      host: '127.0.0.1'
+      DATABASE_NAME: 'test'
+      DATABASE_USER: 'root'
+      DATABASE_PASSWORD: 'Test@123'
+      DATABASE_HOST: '127.0.0.1'
       PORT: '8080'
     services:
       mysqldb:
@@ -43,13 +43,13 @@ jobs:
           sudo mysql --host 127.0.0.1 -uroot -pTest@123 -e "SHOW DATABASES"
       
       - name: install sequelize and mysql2
-        run: npm install sequelize mysql2
+        run: npm install sequelize mysql2 mocha
       
       - name: start node application
         env:
-          database: 'test'
-          username: 'root'
-          password: 'Test@123'
-          host: '127.0.0.1'
+          DATABASE_NAME: 'test'
+          DATABASE_USER: 'root'
+          DATABASE_PASSWORD: 'Test@123'
+          DATABASE_HOST: '127.0.0.1'
           PORT: '8080'
-        run: node app.js
+        run: npm test
