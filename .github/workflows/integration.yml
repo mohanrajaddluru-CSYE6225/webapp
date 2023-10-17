@@ -21,7 +21,7 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_PASSWORD: $DATABASE_PASSWORD
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
           MYSQL_DATABASE: $MYSQL_DATABASE
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=30s --health-retries=5
 
@@ -45,7 +45,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-client
-          sudo mysql --host 127.0.0.1 -u root -pTest@123 -e "SHOW DATABASES"
+          sudo mysql --host 127.0.0.1 -u root -e "SHOW DATABASES"
       
       #- name: install sequelize and mysql2
       #  run: npm install sequelize mysql2 
