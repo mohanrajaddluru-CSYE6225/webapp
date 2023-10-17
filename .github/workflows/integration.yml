@@ -33,12 +33,16 @@ jobs:
           mysql user: 'root'
           mysql password: 'Test@123'
       
+      - name: install mocha
+        run: npm install mocha
+      
       - name: starting the webapp application
-        run: node app.js
+        run: npm test
         env:
           DATABASE_NAME: test
           DATABASE_USER: root
           DATABASE_PASSWORD: Test@123
           DATABASE_HOST: 127.0.0.1
+          PORT: 8080
 
             
