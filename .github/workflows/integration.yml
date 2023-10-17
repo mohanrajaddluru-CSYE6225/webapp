@@ -9,6 +9,9 @@ jobs:
   Test-Integration:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.0
+            
       - name: Echo the result of 1 + 1
         run: echo $((1 + 1))
 
