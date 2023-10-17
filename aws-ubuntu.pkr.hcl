@@ -1,8 +1,3 @@
-
-locals {
-  timestamp = regex_replace(timestamp(), "[- TZ:]", "")
-}
-
 variable "ami_name" {
   type    = string
   default = "test123"
@@ -37,14 +32,14 @@ packer {
 }
 
 source "amazon-ebs" "debian" {
-  ami_name        = "${var.ami_name}-${local.timestamp}"
+  ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   instance_type   = "${var.typeOfInstance}"
   region          = "${var.ami_region}"
   ssh_username    = "${var.login_username}"
-  ami_description = "created from packer"
+  ami_description = "AMI for Webapp"
   source_ami_filter {
     filters = {
-      name                = "debian-*-*-amd64-*"
+      name                = "debian-12-*-amd64-*"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
