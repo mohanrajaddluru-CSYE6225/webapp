@@ -34,6 +34,7 @@ jobs:
           mysql password: 'Test@123'
       
       - name: starting the webapp application
+        run: node app.js
         env:
           DATABASE_NAME: test
           DATABASE_USER: root
