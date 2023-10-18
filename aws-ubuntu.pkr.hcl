@@ -2,26 +2,27 @@ variable "ami_name" {
   type    = string
   default = "test123"
 }
-variable "ami_region" {
+variable "region" {
   type    = string
   default = "us-east-1"
 }
-variable "login_username" {
+variable "ssh_username" {
   type    = string
   default = "admin"
 }
-variable "typeOfInstance" {
+variable "instance_type" {
   type    = string
   default = "t2.micro"
 }
-variable "sourceAMIOwner" {
+variable "owners" {
   type    = string
   default = "136693071363"
 }
-variable "AMIsharedOwnerID" {
+variable "ami_users" {
   type    = string
   default = "171509565742"
 }
+
 packer {
   required_plugins {
     amazon = {
