@@ -9,7 +9,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     env:
-      LOCAL_DATABASE_HOST: ${{ vars.LOCAL_DATABASE_HOST }}
+      LOCAL_DATABASE_HOST: ${{ vars.DATABASE_HOST }}
       #ROOT_DATABASE_USER: ${{ vars.ROOT_DATABASE_USER }}
       #ROOT_DATABASE_PASSWORD: ${{ vars.ROOT_DATABASE_PASSWORD }}
       DATABASE_USER: ${{vars.ROOT_DATABASE_USER}}
