@@ -9,7 +9,7 @@ sudo apt install nodejs
 node -v
 npm -v
 
-npm ci
+#npm ci
 
 echo "MohanLog1"
 
@@ -60,8 +60,8 @@ EOF
 sudo mysql -u root -e "create user 'mohan'@'localhost' identified by 'password'"
 sudo mysql -u root -e "create database test"
 sudo mysql -u root -e "grant all privileges on test.* to 'mohan'@'localhost' identified by 'password'"
-npm install --save
-npm fund
+#npm install --save
+#npm fund
 
 echo "list of databases"
 
@@ -74,7 +74,10 @@ sudo ls -ltrh
 
 
 cd ~/ && unzip webapp.zip
-#cd ~/webapp
+
+npm ci
+npm install --save
+npm fund
 
 
 sudo mv /tmp/webapp.service /etc/systemd/system/webapp.service
