@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
         DATABASE_HOST: ${{ vars.DATABASE_HOST }}
-        DATABASE_USER: ${{ vars.DATABASE_USER }}
-        DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}
+        DATABASE_USER: ${{ vars.ROOT_DATABASE_USER }}
+        DATABASE_PASSWORD: ${{ vars.ROOT_DATABASE_PASSWORD }}
         DATABASE_NAME: ${{ vars.DATABASE_NAME }}
 
     strategy:
@@ -23,8 +23,8 @@ jobs:
     - name: write variables into env file
       run: |
         echo "DATABASE_HOST: ${{ vars.DATABASE_HOST }}" >> .env
-        echo "DATABASE_USER: ${{ vars.DATABASE_USER }}" >> .env
-        echo "DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}" >> .env
+        echo "DATABASE_USER: ${{ vars.ROOT_DATABASE_USER }}" >> .env
+        echo "DATABASE_PASSWORD: ${{ vars.ROOT_DATABASE_PASSWORD }}" >> .env
         echo "DATABASE_NAME: ${{ vars.DATABASE_NAME }}" >> .env
         echo "below are environment variables"
         cat .env
