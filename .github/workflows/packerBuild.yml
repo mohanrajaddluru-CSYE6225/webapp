@@ -27,6 +27,16 @@ jobs:
       - name: git checkout current repo code
         uses: actions/checkout@v4
       
+      - name: write variables into env file
+        run: |
+          echo "DATABASE_HOST: ${{ vars.DATABASE_HOST }}" >> .env
+          echo "DATABASE_USER: ${{ vars.DATABASE_USER }}" >> .env
+          echo "DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_NAME: ${{ vars.DATABASE_NAME }}" >> .env
+          echo "below are environment variables"
+          cat .env
+        shell: bash
+      
       - name: install npm modules
         run: npm ci 
 
@@ -54,16 +64,6 @@ jobs:
         id: setup
         with:
           version: ${{ env.PRODUCT_VERSION }}
-      
-      - name: write variables into env file
-        run: |
-          echo "DATABASE_HOST: ${{ vars.DATABASE_HOST }}" >> .env
-          echo "DATABASE_USER: ${{ vars.DATABASE_USER }}" >> .env
-          echo "DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}" >> .env
-          echo "DATABASE_NAME: ${{ vars.DATABASE_NAME }}" >> .env
-          echo "below are environment variables"
-          cat .env
-        shell: bash
 
       - name: Check version of packer
         run: packer -v
