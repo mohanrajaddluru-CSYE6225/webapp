@@ -53,9 +53,15 @@ send "Y\r"
 expect eof
 EOF
 
-sudo mysql -u root -e "create user mohan identified by 'password'"
+# sudo mysql -u root -e "create user mohan identified by 'password'"
+# sudo mysql -u root -e "create database test"
+# sudo mysql -u root -e "grant all previliges on test.* to 'mohan'@'localhost' identified by 'password'"
+
+sudo mysql -u root -e "create user 'mohan'@'localhost' identified by 'password'"
 sudo mysql -u root -e "create database test"
-sudo mysql -u root -e "grant all previliges on test.* to 'mohan'@'localhost' identified by 'password'"
+sudo mysql -u root -e "grant all privileges on test.* to 'mohan'@'localhost' identified by 'password'"
+npm install --save
+npm fund
 
 echo "list of databases"
 
