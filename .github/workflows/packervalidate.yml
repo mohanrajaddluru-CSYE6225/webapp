@@ -12,6 +12,10 @@ env:
   typeOfInstance: ${{ secrets.TYPEOFINSTANCE }}
   sourceAMIOwner: ${{ secrets.SOURCEAMIOWNER }}
   AMIsharedOwnerID: ${{ secrets.AMISHAREDOWNERID }}
+  DATABASE_HOST: ${{ vars.DATABASE_HOST }}
+  DATABASE_USER: ${{ vars.DATABASE_USER }}
+  DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}
+  DATABASE_NAME: ${{ vars.DATABASE_NAME }}
 
 
 jobs:
@@ -21,6 +25,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: write variables into env file
+        run: |
+          env > .env
+          echo "below are environment variables"
+          cat .env
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
