@@ -36,7 +36,7 @@ jobs:
           sudo apt-get install -y mysql-client
           sudo service mysql restart
           sudo service mysql status
-          mysql --host $DATABASE_HOST -u $DATABASE_USER -p$DATABASE_PASSWORD -e "SHOW DATABASES"
+          mysql --host localhost -u $DATABASE_USER -p$DATABASE_PASSWORD -e "SHOW DATABASES"
 
       - name: print env variables
         run: printenv
