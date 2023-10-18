@@ -9,6 +9,8 @@ sudo apt install nodejs
 node -v
 npm -v
 
+npm ci
+
 echo "MohanLog1"
 
 sudo apt-get install mariadb-server unzip -y
@@ -51,14 +53,9 @@ send "Y\r"
 expect eof
 EOF
 
-#sudo mysql -u root -e "CREATE USER 'test'@'127.0.0.1' IDENTIFIED BY ' '; GRANT CREATE, ALTER, DROP, INDEX, INSERT, SELECT, UPDATE, DELETE, CREATE TEMPORARY TABLES, LOCK TABLES ON *.* TO 'test'@'127.0.0.1'; GRANT ALL PRIVILEGES ON *.* TO 'test'@'127.0.0.1'; FLUSH PRIVILEGES;",
-
-
-sudo mysql -u root -e "CREATE DATABASE test;"
-
-echo "created test database"
-
-sudo mysql -u root -e "SHOW DATABASES";
+sudo mysql -u root -e "create user mohan identified by 'password'"
+sudo mysql -u root -e "create database test"
+sudo mysql -u root -e "grant all previliges on test.* to 'mohan'@'localhost' identified by 'password'"
 
 echo "list of databases"
 
