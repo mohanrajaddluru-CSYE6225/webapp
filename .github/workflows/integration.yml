@@ -26,7 +26,7 @@ jobs:
     
     - name: write variables into env file
       run: |
-        echo "LOCAL_DATABASE_HOST: ${{ vars.LOCAL_DATABASE_HOST }}" >> .env
+        echo "LOCAL_DATABASE_HOST: ${{ vars.DATABASE_HOST }}" >> .env
         echo "DATABASE_HOST: ${{vars.DATABASE_HOST}}" >> .env
         echo "ROOT_DATABASE_USER: ${{ vars.ROOT_DATABASE_USER }}" >> .env
         echo "ROOT_DATABASE_PASSWORD: ${{ vars.ROOT_DATABASE_PASSWORD }}" >> .env
