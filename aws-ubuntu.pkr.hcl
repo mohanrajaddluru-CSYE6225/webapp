@@ -68,6 +68,11 @@ build {
     destination = "/tmp/webapp.service"
   }
 
+  provisioner "file" {
+    source      = ".env"
+    destination = "/home/admin/.env"
+  }
+
   provisioner "shell" {
     script = "./install.sh"
   }
