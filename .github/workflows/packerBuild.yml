@@ -66,7 +66,7 @@ jobs:
         run: sudo systemctl start mysql
 
       - name: Create database in the MySql server
-        run: sudo mysql --user=$DATABASE_USER --password=$DATABASE_PASSWORD -e "create database $DATABASE_NAME";
+        run: sudo mysql --user=root --password=root -e "create database $DATABASE_NAME";
 
       - name: Test webapp application
         run: npm test
