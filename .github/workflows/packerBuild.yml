@@ -57,9 +57,13 @@ jobs:
       
       - name: write variables into env file
         run: |
-          env > .env
+          echo "DATABASE_HOST: ${{ vars.DATABASE_HOST }}" >> .env
+          echo "DATABASE_USER: ${{ vars.DATABASE_USER }}" >> .env
+          echo "DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_NAME: ${{ vars.DATABASE_NAME }}" >> .env
           echo "below are environment variables"
           cat .env
+        shell: bash
 
       - name: Check version of packer
         run: packer -v
