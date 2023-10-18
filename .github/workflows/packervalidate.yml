@@ -6,12 +6,11 @@ on:
       - main
 env:
   PRODUCT_VERSION: "1.9.4"
-  ami_name: ${{ secrets.AMI_NAME }}
-  ami_region: ${{ secrets.AMI_REGION }}
-  login_username: ${{ secrets.LOGIN_USERNAME }}
-  typeOfInstance: ${{ secrets.TYPEOFINSTANCE }}
-  sourceAMIOwner: ${{ secrets.SOURCEAMIOWNER }}
-  AMIsharedOwnerID: ${{ secrets.AMISHAREDOWNERID }}
+  AMI_REGION: ${{ vars.AMI_REGION }}
+  LOGIN_USERNAME: ${{ vars.LOGIN_USERNAME }}
+  INSTANCE_TYPE: ${{ vars.INSTANCE_TYPE }}
+  AMIOWNERID: ${{ vars.AMIOWNERID }}
+  AMISHAREDOWNER: ${{ vars.AMISHAREDOWNER }}
   DATABASE_HOST: ${{ vars.DATABASE_HOST }}
   DATABASE_USER: ${{ vars.DATABASE_USER }}
   DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}
@@ -28,10 +27,14 @@ jobs:
 
       - name: write variables into env file
         run: |
-          echo "DATABASE_HOST: ${{ vars.DATABASE_HOST }}" >> .env
-          echo "DATABASE_USER: ${{ vars.DATABASE_USER }}" >> .env
+          echo "LOCAL_DATABASE_HOST: ${{ vars.LOCAL_DATABASE_HOST }}" >> .env
+          echo "DATABASE_HOST: ${{vars.DATABASE_HOST}}" >> .env
+          echo "ROOT_DATABASE_USER: ${{ vars.ROOT_DATABASE_USER }}" >> .env
+          echo "ROOT_DATABASE_PASSWORD: ${{ vars.ROOT_DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_USER: ${{vars.DATABASE_USER}}" >> .env
           echo "DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}" >> .env
           echo "DATABASE_NAME: ${{ vars.DATABASE_NAME }}" >> .env
+          echo "DATABASE_HOST: ${{ vars.DATABASE_HOST }}" >> .env
           echo "below are environment variables"
           cat .env
         shell: bash

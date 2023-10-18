@@ -9,23 +9,31 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     env:
-        DATABASE_HOST: ${{ vars.DATABASE_HOST }}
-        DATABASE_USER: ${{ vars.DATABASE_USER }}
-        DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}
-        DATABASE_NAME: ${{ vars.DATABASE_NAME }}
+      LOCAL_DATABASE_HOST: ${{ vars.LOCAL_DATABASE_HOST }}
+      DATABASE_HOST: ${{ vars.DATABASE_HOST }}
+      ROOT_DATABASE_USER: ${{ vars.ROOT_DATABASE_USER }}
+      ROOT_DATABASE_PASSWORD: ${{ vars.ROOT_DATABASE_PASSWORD }}
+      DATABASE_USER: ${{vars.DATABASE_USER}}
+      DATABASE_PASSWORD: ${{vars.DATABASE_PASSWORD}}
+      DATABASE_NAME: ${{ vars.DATABASE_NAME }}
+      DATABASE_HOST: ${{vars.DATABASE_HOST}}
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [20.x]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     
     - name: write variables into env file
       run: |
-        echo "DATABASE_HOST: ${{ vars.DATABASE_HOST }}" >> .env
-        echo "DATABASE_USER: ${{ vars.DATABASE_USER }}" >> .env
+        echo "LOCAL_DATABASE_HOST: ${{ vars.LOCAL_DATABASE_HOST }}" >> .env
+        echo "DATABASE_HOST: ${{vars.DATABASE_HOST}}" >> .env
+        echo "ROOT_DATABASE_USER: ${{ vars.ROOT_DATABASE_USER }}" >> .env
+        echo "ROOT_DATABASE_PASSWORD: ${{ vars.ROOT_DATABASE_PASSWORD }}" >> .env
+        echo "DATABASE_USER: ${{vars.DATABASE_USER}}" >> .env
         echo "DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}" >> .env
         echo "DATABASE_NAME: ${{ vars.DATABASE_NAME }}" >> .env
+        echo "DATABASE_HOST: ${{ vars.DATABASE_HOST }}" >> .env
         echo "below are environment variables"
         cat .env
       shell: bash
@@ -46,7 +54,7 @@ jobs:
       run: sudo systemctl start mysql
 
     - name: Create database in the MySql server
-      run: sudo mysql --user=$DATABASE_USER --password=$DATABASE_PASSWORD -e "create database $DATABASE_NAME";
+      run: sudo mysql --user=$ROOT_DATABASE_USER --password=$ROOT_DATABASE_PASSWORD -e "create database $DATABASE_NAME";
 
     - name: Test webapp application
       run: npm test
