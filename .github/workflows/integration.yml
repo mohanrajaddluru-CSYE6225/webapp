@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       LOCAL_DATABASE_HOST: ${{ vars.LOCAL_DATABASE_HOST }}
-      DATABASE_HOST: ${{ vars.DATABASE_HOST }}
       ROOT_DATABASE_USER: ${{ vars.ROOT_DATABASE_USER }}
       ROOT_DATABASE_PASSWORD: ${{ vars.ROOT_DATABASE_PASSWORD }}
       DATABASE_USER: ${{vars.DATABASE_USER}}
       DATABASE_PASSWORD: ${{vars.DATABASE_PASSWORD}}
       DATABASE_NAME: ${{ vars.DATABASE_NAME }}
       DATABASE_HOST: ${{vars.DATABASE_HOST}}
+      PORT: ${{ vars.PORT }}
 
     strategy:
       matrix:
@@ -34,6 +34,7 @@ jobs:
         echo "DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}" >> .env
         echo "DATABASE_NAME: ${{ vars.DATABASE_NAME }}" >> .env
         echo "DATABASE_HOST: ${{ vars.DATABASE_HOST }}" >> .env
+        echo "PORT: ${{ vars.PORT }}" >> .env
         echo "below are environment variables"
         cat .env
       shell: bash
