@@ -12,6 +12,10 @@ env:
   typeOfInstance: ${{ secrets.TYPEOFINSTANCE }}
   sourceAMIOwner: ${{ secrets.SOURCEAMIOWNER }}
   AMIsharedOwnerID: ${{ secrets.AMISHAREDOWNERID }}
+  DATABASE_HOST: ${{ vars.DATABASE_HOST }}
+  DATABASE_USER: ${{ vars.DATABASE_USER }}
+  DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}
+  DATABASE_NAME: ${{ vars.DATABASE_NAME }}
 
 
 
@@ -20,36 +24,42 @@ jobs:
     runs-on: ubuntu-latest
     name: Build AMI Image
     steps:
-      - name: print console log
-        run: echo 'started packer build yml'
-
-      - name: check working directory
-        run: pwd
-
-      - name: git checkout current repo code and only root files
+      - name: git checkout current repo code
         uses: actions/checkout@v4
+      
+      - name: install npm modules
+        run: npm ci 
 
-      - name: check working directory
-        run: pwd | ls -la
+      - name: fund npm
+        run: npm fund
+      
+      - name: Start MySql Server
+        run: sudo systemctl start mysql
 
-      - name: check for available files 2.0
-        run: ls -la
-        
+      - name: Create database in the MySql server
+        run: sudo mysql --user=$DATABASE_USER --password=$DATABASE_PASSWORD -e "create database $DATABASE_NAME";
+
+      - name: Test webapp application
+        run: npm test
+
       - name: zip the file
         uses: thedoctor0/zip-release@0.7.1
         with:
           type: 'zip'
           filename: 'webapp.zip'
           exclusions: '*.git* /*node_modules/* '
-        
-      - name: Again check for available files
-        run: ls -la
-      
+
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
         id: setup
         with:
           version: ${{ env.PRODUCT_VERSION }}
+      
+      - name: write variables into env file
+        run: |
+          env > .env
+          echo "below are environment variables"
+          cat .env
 
       - name: Check version of packer
         run: packer -v
@@ -68,4 +78,4 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
+          AWS_DEFAULT_REGION: ${{ secrets.AMI_REGION }}
