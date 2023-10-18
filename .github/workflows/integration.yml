@@ -13,6 +13,7 @@ jobs:
         DATABASE_USER: ${{ vars.ROOT_DATABASE_USER }}
         DATABASE_PASSWORD: ${{ vars.ROOT_DATABASE_PASSWORD }}
         DATABASE_NAME: ${{ vars.DATABASE_NAME }}
+        PORT: ${{vars.PORT}}
 
     strategy:
       matrix:
@@ -26,6 +27,7 @@ jobs:
         echo "DATABASE_USER: ${{ vars.ROOT_DATABASE_USER }}" >> .env
         echo "DATABASE_PASSWORD: ${{ vars.ROOT_DATABASE_PASSWORD }}" >> .env
         echo "DATABASE_NAME: ${{ vars.DATABASE_NAME }}" >> .env
+        echo "PORT: ${{vars.PORT}}" >> .env
         echo "below are environment variables"
         cat .env
       shell: bash
