@@ -53,7 +53,7 @@ source "amazon-ebs" "debian" {
 
 
 
-build {
+          build {
   name = "learn-packer"
   sources = [
     "source.amazon-ebs.debian"
