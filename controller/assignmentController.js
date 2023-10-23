@@ -196,7 +196,7 @@ const updateAssignment = async(req,res) => {
                   id : req.params.id
                 }
               })
-              sendResponse(res,201,{"message" : "Posted data"});;
+              sendResponse(res,204,{"message" : "Posted data"});;
             }
             else
             {
