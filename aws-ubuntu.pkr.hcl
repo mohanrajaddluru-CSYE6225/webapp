@@ -30,7 +30,7 @@ packer {
       source  = "github.com/hashicorp/amazon"
     }
   }
-}
+
 
 source "amazon-ebs" "debian" {
   ami_name        = "csye6225_V1_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
