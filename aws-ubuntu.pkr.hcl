@@ -49,7 +49,7 @@ source "amazon-ebs" "debian" {
   }
   ami_users = ["${var.ami_users}"]
 
-}
+
 
 
 
