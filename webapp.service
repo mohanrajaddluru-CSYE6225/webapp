@@ -11,9 +11,9 @@ RestartSec=10
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=webapp
-User=admin
+User=webapp
 
 
 [Install]
-WantedBy=multi-user. target
-WantedBy=cloud-init. target
+WantedBy=multi-user.target
+WantedBy=cloud-init.target
