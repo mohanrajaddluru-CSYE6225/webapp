@@ -98,15 +98,15 @@ npm install --save
 
 npm fund
 
-echo "DATABASE_HOST: mohan.c4tltzid5dl3.us-east-1.rds.amazonaws.com" >> ~/webapp/.env
+# echo "DATABASE_HOST: mohan.c4tltzid5dl3.us-east-1.rds.amazonaws.com" >> ~/webapp/.env
 
-echo "DATABASE_USER: mohan" >> ~/webapp/.env
+# echo "DATABASE_USER: mohan" >> ~/webapp/.env
 
-echo "DATABASE_NAME: test" >> ~/webapp/.env
+# echo "DATABASE_NAME: test" >> ~/webapp/.env
 
-echo "DATABASE_PASSWORD: password" >> ~/webapp/.env
+# echo "DATABASE_PASSWORD: password" >> ~/webapp/.env
 
-echo "PORT: 8080" >> ~/webapp/.env
+# echo "PORT: 8080" >> ~/webapp/.env
 
 ls -ltrah
 
