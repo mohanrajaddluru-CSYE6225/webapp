@@ -1,6 +1,7 @@
 [Unit]
 Description=webapp
-After=cloud-final.service
+After=network.target
+Wants=cloud-init.target
 
 
 [Service]
@@ -16,4 +17,3 @@ User=webapp
 
 [Install]
 WantedBy=multi-user.target
-WantedBy=cloud-init.target
