@@ -78,28 +78,30 @@ const postAssignment = async (req,res) =>
     if (currentUser)
     {
         try{
-            const points = parseInt(req.body.points, 10);
-            if (!Number.isInteger(points)) {
-              throw new Error('points must be an integer');
+            if (!Number.isInteger(req.body.points)) {
+              sendResponse(res,400, "Bad request");
             }
-            const assignment = await Assignment.create
-            ({
-                //id : req.body.id,
-                name : req.body.name,
-                points : req.body.points,
-                num_of_attempts : req.body.num_of_attempts,
-                deadline : req.body.deadline,
-                assignment_created : new Date(),
-                assignment_updated : new Date()
-            })
+            else
+            {
+              const assignment = await Assignment.create
+              ({
+                  //id : req.body.id,
+                  name : req.body.name,
+                  points : req.body.points,
+                  num_of_attempts : req.body.num_of_attempts,
+                  deadline : req.body.deadline,
+                  assignment_created : new Date(),
+                  assignment_updated : new Date()
+              })
 
-            const mappedAssignment = await AssignmentCreator.create
-            ({
-                userId : currentUser.id,
-                assignmentId : assignment.id
-            })
-            console.log(assignment.id);
-            sendResponse(res,201,assignment);
+              const mappedAssignment = await AssignmentCreator.create
+              ({
+                  userId : currentUser.id,
+                  assignmentId : assignment.id
+              })
+              console.log(assignment.id);
+              sendResponse(res,201,assignment);
+            }
         }
         catch (error)
         {
@@ -180,35 +182,37 @@ const updateAssignment = async(req,res) => {
         if (currentUser)
         {
           try{
-            const points = parseInt(req.body.points, 10);
-            if (!Number.isInteger(points)) {
-              throw new Error('points must be an integer');
-            }
-            var assignmentListForCurrentUser = await currUserAsignments(currentUser)
-            const index = assignmentListForCurrentUser.indexOf(req.params.id);
-            console.log(req.body);
-            if (index !== -1)
-            {
-              var values = req.body;
-              if (values.hasOwnProperty('assignment_created') || values.hasOwnProperty('assignment_updated'))
-              {
-                delete values.assignment_created;
-                delete values.assignment_updated;
-              }
-              const updatedValues = {
-                ...values,
-                "assignment_updated": new Date()
-              };
-              const updatedAssignment = await Assignment.update( updatedValues, {
-                where : {
-                  id : req.params.id
-                }
-              })
-              sendResponse(res,204,{"message" : "Updated data"});;
+            if (!Number.isInteger(req.body.points)) {
+              sendResponse(res,400, "Bad request");
             }
             else
             {
-              sendResponse(res,401,{"message" : "error posting data"});
+              var assignmentListForCurrentUser = await currUserAsignments(currentUser)
+              const index = assignmentListForCurrentUser.indexOf(req.params.id);
+              console.log(req.body);
+              if (index !== -1)
+              {
+                var values = req.body;
+                if (values.hasOwnProperty('assignment_created') || values.hasOwnProperty('assignment_updated'))
+                {
+                  delete values.assignment_created;
+                  delete values.assignment_updated;
+                }
+                const updatedValues = {
+                  ...values,
+                  "assignment_updated": new Date()
+                };
+                const updatedAssignment = await Assignment.update( updatedValues, {
+                  where : {
+                    id : req.params.id
+                  }
+                })
+                sendResponse(res,204);;
+              }
+              else
+              {
+                sendResponse(res,401,{"message" : "error posting data"});
+              }
             }
           }
           catch{
