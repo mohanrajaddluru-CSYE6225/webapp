@@ -78,6 +78,10 @@ const postAssignment = async (req,res) =>
     if (currentUser)
     {
         try{
+            const points = parseInt(req.body.points, 10);
+            if (!Number.isInteger(points)) {
+              throw new Error('points must be an integer');
+            }
             const assignment = await Assignment.create
             ({
                 //id : req.body.id,
@@ -176,6 +180,10 @@ const updateAssignment = async(req,res) => {
         if (currentUser)
         {
           try{
+            const points = parseInt(req.body.points, 10);
+            if (!Number.isInteger(points)) {
+              throw new Error('points must be an integer');
+            }
             var assignmentListForCurrentUser = await currUserAsignments(currentUser)
             const index = assignmentListForCurrentUser.indexOf(req.params.id);
             console.log(req.body);
@@ -196,7 +204,7 @@ const updateAssignment = async(req,res) => {
                   id : req.params.id
                 }
               })
-              sendResponse(res,204,{"message" : "Posted data"});;
+              sendResponse(res,204,{"message" : "Updated data"});;
             }
             else
             {

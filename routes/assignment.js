@@ -38,7 +38,7 @@ router.get('/',isEmptyRequest, getUserAssignments).get('/:id',isGetIDEmptyReques
 
 router.post('/',postAssignment);
 
-router.delete('/:id', removeAssignment);
+router.delete('/:id',isEmptyRequest, removeAssignment);
 
 router.put('/:id', updateAssignment);
 
