@@ -122,7 +122,9 @@ ls -ltrah
 
 cd /home/admin/
 
-#sudo chown -R webapp:webapp webapp 
+sudo chown -R webapp:webapp /home/webapp/webapp 
+
+sudo ls -ltrah /home/webapp/
 
 sudo mv /tmp/webapp.service /etc/systemd/system/webapp.service
 
