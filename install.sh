@@ -50,6 +50,8 @@ ls -ltrah
 
 cd /home/admin/
 
+sudo chown -R 744 /home/webappuser/
+
 sudo chown -R webappuser:webappuser /home/webappuser/webapp 
 
 sudo ls -ltrah /home/webappuser/
