@@ -30,7 +30,15 @@ const getAssignmentbyID = async (req,res) => {
               id : req.params.id
             }
           })
-          sendResponse(res,200,currentAssignment);
+          if (currentAssignment.length !== 0)
+          {
+            sendResponse(res,200,currentAssignment);
+          }
+          else
+          {
+            sendResponse(res,204);
+          }
+          
         }
         else{
           sendResponse(res,401);
