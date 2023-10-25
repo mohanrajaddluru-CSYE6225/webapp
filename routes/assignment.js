@@ -11,6 +11,11 @@ const { getAssignmentbyID, getUserAssignments, postAssignment, removeAssignment,
 function isEmptyRequest(req, res, next) {
     if (Object.keys(req.body).length === 0 && Object.keys(req.params).length === 0) 
     {
+        console.log("this is empty request")
+        next();
+    }
+    else if (Object.keys(req.body).length === 0)
+    {
         next();
     }
     else
@@ -38,10 +43,13 @@ router.get('/',isEmptyRequest, getUserAssignments).get('/:id',isGetIDEmptyReques
 
 router.post('/',postAssignment);
 
-router.delete('/:id',isEmptyRequest, removeAssignment);
+router.delete('/:id', isEmptyRequest, removeAssignment);
 
 router.put('/:id', updateAssignment);
 
-router.all('*', (req,res) => { res.status(405).json()});
+router.head('/', (req,res) => { console.log("test head");res.status(405).json()});
+
+
+router.all('/', (req,res) => { res.status(405).json()});
 
 module.exports = router;
