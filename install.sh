@@ -11,7 +11,7 @@ npm -v
 
 sudo lsb_release -a
 
-sudo useradd -m -p $(openssl passwd -1 password) webapp
+sudo useradd -m -p $(openssl passwd -1 password) webappuser
 
 sudo cat /etc/passwd
 
@@ -78,25 +78,33 @@ echo "below are current repo folders"
 
 sudo ls -ltrh
 
-cd ~/
+sudo mkdir /home/webappuser/webapp
 
-mkdir webapp
+sudo cp /home/admin/webapp.zip /home/webappuser/webapp/
 
-ls -ltrah
+ls -ltrah /home/webappuser/webapp/
 
-cp webapp.zip webapp/
+cd /home/webappuser/webapp
 
-cd webapp/
-
-unzip webapp.zip
+#mkdir webapp
 
 ls -ltrah
 
-npm ci
+#cp webapp.zip webapp/
 
-npm install --save
+#cd webapp/
 
-npm fund
+pwd
+
+sudo unzip /home/webappuser/webapp/webapp.zip
+
+sudo ls -ltrah /home/webappuser/webapp
+
+sudo npm ci
+
+sudo npm install --save
+
+sudo npm fund
 
 # echo "DATABASE_HOST: mohan.c4tltzid5dl3.us-east-1.rds.amazonaws.com" >> ~/webapp/.env
 
@@ -110,11 +118,11 @@ npm fund
 
 ls -ltrah
 
-cat ~/webapp/.env
+#cat ~/webapp/.env
 
-cd ~/
+cd /home/admin/
 
-sudo chown -R webapp:webapp webapp 
+#sudo chown -R webapp:webapp webapp 
 
 sudo mv /tmp/webapp.service /etc/systemd/system/webapp.service
 
