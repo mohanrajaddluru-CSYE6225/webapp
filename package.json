@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests.js --exit",
-    "start": "nodemon app.js"
+    "test": "mocha ../tests/test.js --exit",
+    "start": "nodemon ../app/app.js"
   },
   "author": "",
   "license": "ISC",
