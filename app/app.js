@@ -46,6 +46,7 @@ function isEmptyRequest(req, res, next) {
     }
 }
 
+
 app.use('/v1/assignments', isValidJson, assignmentRoute);
 app.use('/healthz', isValidJson, isEmptyRequest, healthCheckRoutes);
 

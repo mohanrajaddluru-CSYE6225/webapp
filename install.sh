@@ -24,7 +24,7 @@ sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 
 echo "unpacked cloudwatch"
 
-
+sudo mv /tmp/cloudwatch-config.json /opt/cloudwatch-config.json
 
 sudo pwd
 
