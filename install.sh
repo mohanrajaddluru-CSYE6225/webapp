@@ -16,6 +16,16 @@ sudo useradd -m -p $(openssl passwd -1 password) webappuser
 sudo cat /etc/passwd
 
 
+sudo wget https://amazoncloudwatch-agent.s3.amazonaws.com/debian/amd64/latest/amazon-cloudwatch-agent.deb
+
+echo "downloaded cloud watch"
+
+sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
+
+echo "unpacked cloudwatch"
+
+
+
 sudo pwd
 
 echo "below are current repo folders"

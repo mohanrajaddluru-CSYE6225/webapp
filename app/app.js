@@ -8,7 +8,6 @@ const bodyParser = require('body-parser');
 
 const logger = require('../logger/developmentLogs.js');
 
-// const winston = require('winston');
 
 const { UserSchema, AssignmentSchema} = require('./models/index.js');
 const assignmentRoute = require('./routes/assignment.js');
@@ -16,27 +15,6 @@ const { processCSVFile } = require('./userCreate.js')
 const  healthCheckRoutes  = require('./routes/healthCheck.js');
 
 const { bootstrapDatabase } = require('./util/bootstrapdb.js');
-
-// const logger = winston.createLogger({
-//   format: winston.format.combine(
-//     winston.format.timestamp(), // Add a timestamp to log entries
-//     winston.format.simple()
-//   ),
-//   transports: [
-//     new winston.transports.Console(), // Log to the console
-//     new winston.transports.File({ filename: './logs/all-logs.log'}),
-//     // new winston.transports.File({ filename: './logs/error.log', level: 'error' }), // Log errors to a file
-//     // new winston.transports.File({ filename: './logs/info.log', level: 'info' }), // Log info to a file
-//     // new winston.transports.File({ filename: './logs/warn.log', level: 'warn' }) // Log warn to a file
-//   ],
-// });
-
-// if (process.env.NODE_ENV !== 'production') {
-//     logger.add(new winston.transports.Console({
-//       format: winston.format.simple(),
-//     }));
-//   }
-
 
 const app = express();
 app.use(bodyParser.json());
@@ -127,4 +105,3 @@ async function main() {
 main();
 
 module.exports = app;
-// module.logger = logger;
