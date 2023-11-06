@@ -2,6 +2,8 @@ const express = require('express');
 const sequelize = require('../database.js');
 const router = express.Router();
 
+const statsd = require('../../metrics/metricslogger.js');
+
 
 const sendResponse = (res, statusCode, message) => {
     res.setHeader('Content-Type', 'application/json');
@@ -12,6 +14,7 @@ const sendResponse = (res, statusCode, message) => {
 
 const checkHealth = async (req,res) => 
 {
+    statsd.increment('myendpoint.healthz.http.get')
 
     const status = await checkConnection();
     
