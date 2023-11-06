@@ -58,6 +58,8 @@ sudo ls -ltrah /home/webappuser/
 
 sudo mv /tmp/webapp.service /etc/systemd/system/webapp.service
 
+sudo mv /tmp/cloudwatch-config.json /opt/cloudwatch-config.json
+
 sudo systemctl daemon-reload
 
 sudo systemctl enable webapp
