@@ -4,12 +4,6 @@ const bcrypt = require('bcrypt');
 const { User,Assignment,AssignmentCreator } = require('../models/index.js');
 const logger = require('../../logger/developmentLogs.js')
 
-function sometestfunction() {
-  logger.info("here i am pringti the log of info")
-}
-
-sometestfunction()
-
 const { Op } = require('sequelize'); 
 
 const sendResponse = (res, statusCode, message) => {
@@ -23,11 +17,11 @@ const getAssignmentbyID = async (req,res) => {
   const authorizationHeader = req.headers.authorization;
   
     if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
+      logger.error("Authentication not found");
        sendResponse(res,401);
       }
     else
     {
-      console.log("I am here inside the controller");
         const currentUser = await validateUser(authorizationHeader);
         if (currentUser)
         {
@@ -38,17 +32,20 @@ const getAssignmentbyID = async (req,res) => {
           })
           if (currentAssignment.length !== 0)
           {
+            logger.debug(`Assignment with ID ${req.params.id} fetched successfully`);
+            logger.info("Assignemnt fetched succesfully")
             sendResponse(res,200,currentAssignment);
           }
           else
           {
+            logger.error("No Assignments found");
             sendResponse(res,204);
           }
           
         }
         else{
+          logger.error("User not authenticated");
           sendResponse(res,401);
-          //return res.status(401).json("Unauthorized request");
         }
     }
 
@@ -61,6 +58,7 @@ const getUserAssignments = async(req,res) =>
   const authorizationHeader = req.headers.authorization;
 
   if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
+      logger.error("Authentication not found");
       sendResponse(res,401, "Un authenticated, authentication required");
     }
   else
@@ -69,10 +67,13 @@ const getUserAssignments = async(req,res) =>
       if (currentUser)
       {
           var allAssignments = await Assignment.findAll({})
+          logger.info("All user Assignemnts Data fetched succesfully")
           sendResponse(res,200,allAssignments);
       }
       else
       {
+        logger.debug(`User not authenticated`)
+        logger.info(`User Authentication failed`)
         sendResponse(res,401,"Un authenticated, authentication required");
       }
   }
@@ -83,16 +84,17 @@ const postAssignment = async (req,res) =>
   const authorizationHeader = req.headers.authorization;
 
     if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
+      logger.error("Authentication not found");
       sendResponse(res,401, "Authentication required");
       }
 
     const currentUser = await validateUser(authorizationHeader);
-    //console.log(currentUser.id);
 
     if (currentUser)
     {
         try{
             if (!Number.isInteger(req.body.points)) {
+              logger.info("Bad Request");
               sendResponse(res,400, "Bad request");
             }
             else
@@ -113,12 +115,13 @@ const postAssignment = async (req,res) =>
                   userId : currentUser.id,
                   assignmentId : assignment.id
               })
-              console.log(assignment.id);
+              logger.info(`Assignment ${assignment.id} created successfullt`);
               sendResponse(res,201,assignment);
             }
         }
         catch (error)
         {
+          logger.error("bad request");
           sendResponse(res,400,"Bad request");
         }
     }
@@ -134,15 +137,14 @@ const removeAssignment = async (req,res) => {
   const authorizationHeader = req.headers.authorization;
 
     if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
+      logger.error("Authentication not found");
       sendResponse(res,401,"Authentication required");
-        //return res.status(401).json({ message: 'Invalid Authorization header' });
       }
       else{
         const currentUser = await validateUser(authorizationHeader);
         if (currentUser)
         {
           var assignmentListForCurrentUser = await currUserAsignments(currentUser)
-            //console.log(req.params.id, "i am the params id");
             const index = assignmentListForCurrentUser.indexOf(req.params.id);
             if (index !== -1)
             {
@@ -160,25 +162,24 @@ const removeAssignment = async (req,res) => {
 
               if (removeFromAssignments > 0 && removeFromAssignmentCreator)
               {
+                logger.info("Assignment deleted successfully");
+                logger.debug(`Assignment ${req.params.id} deleted successfully`);
                 sendResponse(res,204,"Assignment removed");
               }
               else
               {
                 sendResponse(res,400);
               }
-              //console.log(currentAssignment);
             }
             else
             {
               sendResponse(res,403);
-              //return res.status(400).json("Assignment id not found for the user");
             }
         }
         else{
+          logger.debug("Un authorized request");
             return res.status(401).json("Unauthorized request");
         }
-
-
         }
       }
 
@@ -187,7 +188,7 @@ const updateAssignment = async(req,res) => {
   const authorizationHeader = req.headers.authorization;
 
     if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
-      //const message = { "message" : "Authentication required" };
+      logger.debug("Authentication not found");
       sendResponse(res,401,{ "message" : "Authentication required" });
       }
       else
@@ -203,7 +204,6 @@ const updateAssignment = async(req,res) => {
             {
               var assignmentListForCurrentUser = await currUserAsignments(currentUser)
               const index = assignmentListForCurrentUser.indexOf(req.params.id);
-              console.log(req.body);
               if (index !== -1)
               {
                 var values = req.body;
@@ -221,22 +221,27 @@ const updateAssignment = async(req,res) => {
                     id : req.params.id
                   }
                 })
-                sendResponse(res,204);;
+                logger.debug(`Assignment with ID: ${req.params.id}`)
+                logger.info("Assignment Updated successfully");
+                sendResponse(res,204);
               }
               else
               {
-                sendResponse(res,401,{"message" : "error posting data"});
+                logger.debug(`Assignment with ID: ${req.params.id} is not allowed to update by current user`)
+                sendResponse(res,403,{"message" : "error posting data"});
               }
             }
           }
           catch{
-            sendResponse(res,400, {"message" : "bad request data"});
+            logger.info("user data update failed")
+            sendResponse(res,400, {"message" : " bad request data"});
           }
-          }
-          else
-          {
-            sendResponse(res,403, {"message" : "Authentication required"});
-          }
+        }
+        else
+        {
+          logger.debug(`Assignment with ID: ${req.params.id} is not allowed to update by current user`)
+          sendResponse(res,403, {"message" : "Authentication required"});
+        }
         }
       }
 
@@ -281,9 +286,6 @@ const validateUser = async (authorizationHeader) => {
 
 
 const currUserAsignments = async(presentUser) => {
-  logger.info("this is inside the current assignement get");
-    //console.log("inside current user assignment")
-
     var curr_assignment = await AssignmentCreator.findAll({
         where :
         {
