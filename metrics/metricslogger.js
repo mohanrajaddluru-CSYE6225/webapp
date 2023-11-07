@@ -10,12 +10,12 @@ const logRequestCount = (req, res, next) => {
   const idPattern = /:[a-zA-Z0-9\-_]+/;
   const metricConfig = {
     'GET': {
-      '/healthz' : 'Database Health Check API',
+      '/healthz/' : 'Database Health Check API',
       '/v1/assignments/': 'Get All Assignments API',
       '/v1/assignments/:id': 'Get Assignment By ID API',
     },
     'POST': {
-      '/v1/assignments': 'Create Assignment API',
+      '/v1/assignments/': 'Create Assignment API',
     },
     'PUT': {
       '/v1/assignments/:id': 'Update Assignment API',
