@@ -12,7 +12,6 @@ async function createUsers( firstname, lastname, emailID, passwd)
 {
     try
     {
-        //const { User } = require('./models/user.js');
         const user = await User.create
         ({
             id: uuid(),
@@ -22,14 +21,11 @@ async function createUsers( firstname, lastname, emailID, passwd)
             email: emailID,
             account_created: new Date(),
             account_updated: new Date(),
-            //accountNew : "1"
           });
-          //await user.save();
           console.log(`${emailID} created successfully! with id : ${user.id}`);
     }
     catch (error)
     {
-        //console.log("qerfvravwravrwrwvrw");
         if (error.original.errno === 1062)
         {
             console.error(`User ${emailID} already exist`);

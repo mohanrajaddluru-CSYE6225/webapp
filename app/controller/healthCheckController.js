@@ -2,7 +2,9 @@ const express = require('express');
 const sequelize = require('../database.js');
 const router = express.Router();
 
-const statsd = require('../../metrics/metricslogger.js');
+const logger = require('../../logger/developmentLogs.js');
+
+const metricsLogger = require('../../metrics/metricslogger.js');
 
 
 const sendResponse = (res, statusCode, message) => {
@@ -14,19 +16,16 @@ const sendResponse = (res, statusCode, message) => {
 
 const checkHealth = async (req,res) => 
 {
-    statsd.increment('myendpoint.healthz.http.get')
-
     const status = await checkConnection();
     
     if (status)
     {
+        logger.info("Data base healthz check successful");
         sendResponse(res,200);
-        //res.status(200).json();
     }
     else
     {
         sendResponse(res,503);
-        //res.status(503).json();
     }
 
     
@@ -34,20 +33,19 @@ const checkHealth = async (req,res) =>
 
 const rejectOtherMethods = async (req,res) =>
 {
+    logger.error("Method not supported for this endpoint");
     res.status(405).json();
 }
 
   
 async function checkConnection ()
 {
-    //console.log("eafVAFV");
     try{
         await sequelize.authenticate();
         return true
     }
     catch (error)
     {
-        //console.error(error);
         return false;
     }
 }
