@@ -93,9 +93,18 @@ const postAssignment = async (req,res) =>
     if (currentUser)
     {
         try{
-            if (!Number.isInteger(req.body.points)) {
+            const deadlineRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
+            if (!Number.isInteger(req.body.points)) 
+            {
+              logger.error("Points is not supported")
               logger.info("Bad Request");
               sendResponse(res,400, "Bad request");
+            }
+            else if (!deadlineRegex.test(req.body.deadline)) 
+            {
+              logger.error("wrong deadline date format")
+              logger.info("Bad Request");
+              sendResponse(res, 400, "Bad request date deadline");
             }
             else
             {
@@ -197,8 +206,15 @@ const updateAssignment = async(req,res) => {
         if (currentUser)
         {
           try{
+            const deadlineRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
             if (!Number.isInteger(req.body.points)) {
               sendResponse(res,400, "Bad request");
+            }
+            else if (!deadlineRegex.test(req.body.deadline)) 
+            {
+              logger.error("wrong deadline date format")
+              logger.info("Bad Request");
+              sendResponse(res, 400, "Bad request date deadline");
             }
             else
             {
