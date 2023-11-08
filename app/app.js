@@ -50,29 +50,35 @@ function isEmptyRequest(req, res, next) {
 app.use('/v1/assignments', isValidJson, assignmentRoute);
 app.use('/healthz', isValidJson, isEmptyRequest, healthCheckRoutes);
 
+app.patch('*', (req, res) => {
+    res.status(405).json("Method not allowed");
+});
+
 app.use('*', (req,res) => {
     res.status(404).json();
 })
 
-const { User,Assignment,AssignmentCreator } = require('./models');
-const { UUID, UUIDV4, UniqueConstraintError } = require('sequelize');
 
-const userExist = async (id) => {
-    try{
-        const users = await User.findAll({
-            where: {
-                id : id
-            }
-        })
-        console.log(users);
-        return users.length>0;
-    }
-    catch (error)
-    {
-        console.error('Error while searching for the user:', error);
-        return false;
-    }
-}
+
+// const { User,Assignment,AssignmentCreator } = require('./models');
+// const { UUID, UUIDV4, UniqueConstraintError } = require('sequelize');
+
+// const userExist = async (id) => {
+//     try{
+//         const users = await User.findAll({
+//             where: {
+//                 id : id
+//             }
+//         })
+//         console.log(users);
+//         return users.length>0;
+//     }
+//     catch (error)
+//     {
+//         console.error('Error while searching for the user:', error);
+//         return false;
+//     }
+// }
 
 function startServer() {
     const port = process.env.PORT || 8081;

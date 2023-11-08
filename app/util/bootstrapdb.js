@@ -3,7 +3,7 @@ const { uuid } = require('uuidv4');
 const { parse } = require('csv-parse');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-
+const logger = require('../../logger/developmentLogs.js');
 const sequelize = require('../database.js');
 
 
@@ -22,6 +22,7 @@ async function createUsers( firstname, lastname, emailID, passwd)
             account_created: new Date(),
             account_updated: new Date(),
           });
+          logger.info(`${emailID} user created in database`);
           console.log(`${emailID} created successfully! with id : ${user.id}`);
     }
     catch (error)
