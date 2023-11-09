@@ -54,9 +54,13 @@ app.patch('*', (req, res) => {
     res.status(405).json("Method not allowed");
 });
 
-app.use('*', (req,res) => {
-    res.status(404).json();
+app.use('/', (req,res) => {
+    res.status(405).json();
 })
+
+// app.use('*', (req,res) => {
+//     res.status(404).json();
+// })
 
 
 
