@@ -62,8 +62,6 @@ app.use('/', (req,res) => {
 //     res.status(404).json();
 // })
 
-
-
 // const { User,Assignment,AssignmentCreator } = require('./models');
 // const { UUID, UUIDV4, UniqueConstraintError } = require('sequelize');
 
