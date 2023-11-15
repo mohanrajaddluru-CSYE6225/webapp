@@ -13,6 +13,7 @@ const { UserSchema, AssignmentSchema} = require('./models/index.js');
 const assignmentRoute = require('./routes/assignment.js');
 const { processCSVFile } = require('./userCreate.js')
 const  healthCheckRoutes  = require('./routes/healthCheck.js');
+const getlatestmetadata = require('./routes/latestmetadata.js');
 
 const { bootstrapDatabase } = require('./util/bootstrapdb.js');
 
@@ -49,6 +50,7 @@ function isEmptyRequest(req, res, next) {
 
 app.use('/v1/assignments', isValidJson, assignmentRoute);
 app.use('/healthz', isValidJson, isEmptyRequest, healthCheckRoutes);
+app.use('/', getlatestmetadata);
 
 app.patch('*', (req, res) => {
     res.status(405).json("Method not allowed");
