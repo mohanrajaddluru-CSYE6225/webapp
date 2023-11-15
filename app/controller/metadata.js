@@ -13,17 +13,13 @@ const fetchlatestmetadata = async (req,res) =>
 {
     const TOKEN = await fetchToken();
     const currPath = req.path;
-    const metadataurl = 'http://169.254.169.254${currPath}'
-    res = await fetch(metadataurl, {
-        headers: {
-            'X-aws-ec2-metadata-token': TOKEN
-        },
-    })
-    console.log(res);
+    const metadataurl = `http://169.254.169.254${currPath}`
+    const responseData = await fetch(metadataurl)
+    const responseTextData = await responseData.text();
     logger.info("fetched latest metadata");
-    sendResponse(res,200,res);
+    logger.debug(`latest-metadata ${responseTextData}`);
+    sendResponse(res,200,responseTextData);
 }
-
 
 const fetchToken = async () => {
     try {
@@ -34,7 +30,6 @@ const fetchToken = async () => {
             }
         });
         const token = await response.text();
-        console.log(token);
         return token;
     } catch (error) {
         console.error('Error fetching token:', error);

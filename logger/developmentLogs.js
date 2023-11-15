@@ -7,6 +7,7 @@ const logger = winston.createLogger({
       winston.format.printf(({ timestamp, level, message }) => {
           return JSON.stringify({
               timestamp: timestamp,
+              InstanceId : process.env.INSTANCEID,
               level: level,
               message: message
           });

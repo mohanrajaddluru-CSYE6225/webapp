@@ -5,6 +5,8 @@ const { parse } = require('csv-parse');
 const bcrypt = require('bcrypt');
 const {uuid} = require('uuidv4');
 const bodyParser = require('body-parser');
+require('dotenv').config();
+
 
 const logger = require('../logger/developmentLogs.js');
 
@@ -50,7 +52,7 @@ function isEmptyRequest(req, res, next) {
 
 app.use('/v1/assignments', isValidJson, assignmentRoute);
 app.use('/healthz', isValidJson, isEmptyRequest, healthCheckRoutes);
-app.use('/', getlatestmetadata);
+app.use('/metadata', getlatestmetadata);
 
 app.patch('*', (req, res) => {
     res.status(405).json("Method not allowed");
@@ -60,30 +62,6 @@ app.use('/', (req,res) => {
     res.status(405).json();
 })
 
-// app.use('*', (req,res) => {
-//     res.status(404).json();
-// })
-
-// const { User,Assignment,AssignmentCreator } = require('./models');
-// const { UUID, UUIDV4, UniqueConstraintError } = require('sequelize');
-
-// const userExist = async (id) => {
-//     try{
-//         const users = await User.findAll({
-//             where: {
-//                 id : id
-//             }
-//         })
-//         console.log(users);
-//         return users.length>0;
-//     }
-//     catch (error)
-//     {
-//         console.error('Error while searching for the user:', error);
-//         return false;
-//     }
-// }
-
 function startServer() {
     const port = process.env.PORT || 8081;
     app.listen(port, () => {
@@ -91,11 +69,20 @@ function startServer() {
     });
 }
 
+async function fetchInstanceId()
+{
+    const metadataURL = `http://169.254.169.254/latest/meta-data/instance-id`;
+	var resdata = await fetch(metadataURL);
+	resdata = await resdata.text();
+	process.env.INSTANCEID = resdata;
+}
+
 
 async function main() {
     try {
       if (await bootstrapDatabase())
       {
+        fetchInstanceId();
         processCSVFile();
         startServer();
         console.log("success")
@@ -103,6 +90,7 @@ async function main() {
       }
       else
       {
+        fetchInstanceId();
         startServer();
         console.log("failure");
         logger.error(`Failed to connect Database, Application started and running at port ${process.env.PORT}`)
