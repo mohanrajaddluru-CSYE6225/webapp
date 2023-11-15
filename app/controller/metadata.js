@@ -21,6 +21,7 @@ const fetchlatestmetadata = async (req,res) =>
     sendResponse(res,200,responseTextData);
 }
 
+
 const fetchToken = async () => {
     try {
         const response = await fetch("http://169.254.169.254/latest/api/token", {

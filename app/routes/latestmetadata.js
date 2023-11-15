@@ -4,4 +4,5 @@ const fetchlatestmetadata = require('../controller/metadata.js');
 
 router.get('/*', fetchlatestmetadata);
 
+
 module.exports = router;
