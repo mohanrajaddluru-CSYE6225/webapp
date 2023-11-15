@@ -28,11 +28,18 @@
         "log_stream_name": "cloudwatch_log_stream"
     },
     "metrics":{
-      "metrics_collected":{
+        "append_dimensions":{
+            "InstanceId":"${aws:InstanceId}",
+            "AutoScalingGroupName": "${aws:AutoScalingGroupName}",
+            "ImageId": "${aws:ImageId}",
+            "InstanceType": "${aws:InstanceType}",
+            "PublicIpAddress": "${aws:PublicIpAddress}"
+        },
+        "metrics_collected":{
          "statsd":{
             "service_address":":8125",
             "metrics_collection_interval":10,
-            "metrics_aggregation_interval":10
+            "metrics_aggregation_interval":60
          }
       }
    }
