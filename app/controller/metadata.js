@@ -14,7 +14,7 @@ const fetchlatestmetadata = async (req,res) =>
     const TOKEN = await fetchToken();
     const currPath = req.path;
     const metadataurl = 'http://169.254.169.254${currPath}'
-    const res = await fetch(metadataurl, {
+    res = await fetch(metadataurl, {
         headers: {
             'X-aws-ec2-metadata-token': TOKEN
         },
