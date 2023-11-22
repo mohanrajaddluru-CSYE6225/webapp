@@ -77,12 +77,13 @@ async function fetchInstanceId()
 	process.env.INSTANCEID = resdata;
 }
 
-
 async function main() {
     try {
       if (await bootstrapDatabase())
       {
-        fetchInstanceId();
+        if (process.env.INFRA === 'AWS') {
+            fetchInstanceId();
+          }
         processCSVFile();
         startServer();
         console.log("success")
@@ -90,7 +91,9 @@ async function main() {
       }
       else
       {
-        fetchInstanceId();
+        if (process.env.INFRA === 'AWS') {
+            fetchInstanceId();
+          }
         startServer();
         console.log("failure");
         logger.error(`Failed to connect Database, Application started and running at port ${process.env.PORT}`)
