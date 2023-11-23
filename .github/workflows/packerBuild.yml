@@ -1,9 +1,8 @@
 name: Run packer build on a template file
 
 on:
-  push:
-    branches:
-        - main
+  pull_request:
+    types: [closed]
 env:
   PRODUCT_VERSION: "1.9.4"
   AMI_REGION: ${{ vars.AMI_REGION }}
@@ -19,6 +18,7 @@ env:
 
 jobs:
   packer_build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     name: Build AMI Image
     env:

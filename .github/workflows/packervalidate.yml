@@ -2,8 +2,7 @@ name: Packer Validation
 
 on:
   pull_request:
-    branches:
-      - main
+    types: [opened]
 env:
   PRODUCT_VERSION: "1.9.4"
   AMI_REGION: ${{ vars.AMI_REGION }}
