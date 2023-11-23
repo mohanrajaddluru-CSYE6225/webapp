@@ -37,6 +37,22 @@ function isGetIDEmptyRequest(req, res, next) {
     }
 }
 
+function containsSubmissionURL(req,res,next) {
+    var submissionBody = req.body;
+    if ( Object.keys(submissionBody).length === 1 && submissionBody.hasOwnProperty("submission_url"))
+    {
+        logger.info(`Submission posted for ID : ${req.params.id}`);
+        next();
+        // return res.status(201).json();
+    }
+    else
+    {
+        logger.info(`Submission post for ID: ${req.params.id} has invalid body`);
+        logger.debug(`Submission post for ID: ${req.params.id} has body ${JSON.stringify(req.body)}`);
+        return res.status(400).json();
+    }
+}
+
 
 
 
@@ -44,7 +60,7 @@ function isGetIDEmptyRequest(req, res, next) {
 
 router.get('/', metricsLogger, isEmptyRequest, getUserAssignments).get('/:id',metricsLogger, isGetIDEmptyRequest,getAssignmentbyID);
 
-router.post('/',metricsLogger, postAssignment);
+router.post('/',metricsLogger, postAssignment).post('/:id/submission',metricsLogger, containsSubmissionURL);
 
 router.delete('/:id', metricsLogger, isEmptyRequest, removeAssignment);
 
