@@ -6,7 +6,7 @@ const sequelize = new Sequelize({
     username: process.env.DATABASE_USER, 
     password: process.env.DATABASE_PASSWORD,
     host: process.env.DATABASE_HOST,
-    dialect: 'mysql', // Change this based on your database
+    dialect: 'mysql',
 });
 
 module.exports = sequelize;

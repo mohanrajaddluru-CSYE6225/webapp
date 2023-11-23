@@ -6,11 +6,12 @@ const sequelize = require('../database.js');
 
 const { AssignmentCreator } = require('./assignmentCreate.js');
 
-// cont AssignmentCreator
+const { Submissions } = require('./submissions.js');
 
 
 module.exports = {
     User,
     Assignment,
-    AssignmentCreator
+    AssignmentCreator,
+    Submissions
 }
