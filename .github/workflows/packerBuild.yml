@@ -18,6 +18,7 @@ env:
 
 jobs:
   packer_build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     name: Build AMI Image
     env:
