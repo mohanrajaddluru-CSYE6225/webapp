@@ -8,7 +8,7 @@ const { Op } = require('sequelize');
 const metricsLogger = require('../../metrics/metricslogger.js');
 
 const { User,Assignment,AssignmentCreator } = require('../models/index.js');
-const { getAssignmentbyID, getUserAssignments, postAssignment, removeAssignment, updateAssignment } = require('../controller/assignmentController.js');
+const { getAssignmentbyID, getUserAssignments, postAssignment, removeAssignment, updateAssignment, submissionAssignment } = require('../controller/assignmentController.js');
 
 
 function isEmptyRequest(req, res, next) {
@@ -41,9 +41,8 @@ function containsSubmissionURL(req,res,next) {
     var submissionBody = req.body;
     if ( Object.keys(submissionBody).length === 1 && submissionBody.hasOwnProperty("submission_url"))
     {
-        logger.info(`Submission posted for ID : ${req.params.id}`);
+        logger.info(`Submission posted for ID : ${req.params.id} has valid required body`);
         next();
-        // return res.status(201).json();
     }
     else
     {
@@ -60,7 +59,7 @@ function containsSubmissionURL(req,res,next) {
 
 router.get('/', metricsLogger, isEmptyRequest, getUserAssignments).get('/:id',metricsLogger, isGetIDEmptyRequest,getAssignmentbyID);
 
-router.post('/',metricsLogger, postAssignment).post('/:id/submission',metricsLogger, containsSubmissionURL);
+router.post('/',metricsLogger, postAssignment).post('/:id/submission',metricsLogger, containsSubmissionURL, submissionAssignment);
 
 router.delete('/:id', metricsLogger, isEmptyRequest, removeAssignment);
 

@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const { User,Assignment,AssignmentCreator } = require('../models/index.js');
+const { User,Assignment,AssignmentCreator, Submissions } = require('../models/index.js');
 const logger = require('../../logger/developmentLogs.js')
 
 const { Op } = require('sequelize'); 
+const { error } = require('winston');
 
-const sendResponse = (res, statusCode, message) => {
+const sendResponse = (res,statusCode, message) => {
   res.setHeader('Content-Type', 'application/json');
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.status(statusCode).json(message);
@@ -193,6 +194,109 @@ const removeAssignment = async (req,res) => {
       }
 
 
+
+async function deadlineCheck(currAssignment) {
+  const deadline = new Date(currAssignment.deadline)
+  const currentDate = new Date()
+  console.log(deadline, currentDate)
+  if (currentDate <= deadline )
+  {
+    logger.info(`Dealine not passed for curent assignment with id ${currAssignment.id}, deadline - ${deadline}, currentDate - ${currentDate}`)
+    return true;
+  }
+  else
+  {
+    logger.info(`Deadline passed for current assignment - ${currAssignment.id}`);
+    return false;
+  }
+}
+
+async function maximumSubmissionsCheck(currSubmissions, currAssignment){
+  const currSubmissionsLength = currSubmissions.length;
+  const maxAllowedSubmissions = currAssignment.num_of_attempts;
+  console.log(currSubmissionsLength, maxAllowedSubmissions )
+  if (currSubmissionsLength < maxAllowedSubmissions)
+  {
+    logger.info(`Number of attempts not reached for assignment - ${currAssignment.id}`);
+    return true;
+  }
+  else
+  {
+    logger.info(`Maximum Number of attempts reached for assignment - ${currAssignment.id}`);
+    logger.debug(`Maximum Number of attempts reached for assignment - ${currAssignment.id} with current sumbissions - ${currSubmissions}`);
+    return false;
+  }
+}
+
+
+
+const submissionAssignment = async(req,res) => {
+  const authorizationHeader = req.headers.authorization;
+
+  if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) 
+  {
+    logger.debug("Authentication not found");
+    sendResponse(res,401,{ "message" : "Authentication required" });
+  }
+  else
+  {
+    const currentUser = await validateUser(authorizationHeader);
+    if (currentUser)
+    {
+      var currAssignment = await Assignment.findOne(
+      {
+        where : 
+        {
+          id : req.params.id
+        }
+      })
+      logger.debug(`Maximum attempts for Assignment ${currAssignment.name} is ${currAssignment.num_of_attempts}`)
+      const num_of_attempts = currAssignment.num_of_attempts;
+      const deadline = currAssignment.deadline;
+
+      var currSubmissions = await Submissions.findAll(
+        {
+          where:
+          {
+            assignment_id: req.params.id
+          }
+        }
+      )
+      logger.info(`${currSubmissions.length} submissions are submitted already for ${req.params.id}`);
+      logger.info(`${currAssignment.deadline} is deadline for current Assignment with ID ${req.params.id}`);
+      logger.debug(`${ JSON.stringify(currSubmissions)} are the submission details for ${req.params.id}`);
+      if ( await deadlineCheck(currAssignment) && (await maximumSubmissionsCheck(currSubmissions, currAssignment)))
+      {
+        try
+        {
+          const submission = await Submissions.create(
+            {
+              assignment_id: req.params.id,
+              submission_url: req.body.submission_url,
+              submission_date: new Date(),
+              submission_updated: new Date()
+            }
+          )
+          sendResponse(res,201,submission);
+        }
+        catch (error)
+        {
+          logger.info("Error in submitting the assignment")
+          sendResponse(res,400,error.message);
+        }
+      }
+      else
+      {
+        logger.info("Deadline passed or Maximum Subissions limit reached");
+        sendResponse(res,400, {"message" : "Deadline passed or Maximum Subissions limit reached"});
+
+      }
+    }
+  }
+}
+
+
+  
 const updateAssignment = async(req,res) => {
   const authorizationHeader = req.headers.authorization;
 
@@ -333,5 +437,6 @@ module.exports = {
   getUserAssignments,
   postAssignment,
   removeAssignment,
-  updateAssignment
+  updateAssignment,
+  submissionAssignment
 };
