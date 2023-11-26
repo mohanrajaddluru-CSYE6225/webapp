@@ -3,6 +3,9 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const { User,Assignment,AssignmentCreator, Submissions } = require('../models/index.js');
 const logger = require('../../logger/developmentLogs.js')
+const publishSnsMessage = require('../../aws-sns-publish.js');
+
+
 
 const { Op } = require('sequelize'); 
 const { error } = require('winston');
@@ -277,6 +280,17 @@ const submissionAssignment = async(req,res) => {
               submission_updated: new Date()
             }
           )
+          const dataForSnsMessage = {
+            submission_url : req.body.submission_url,
+            user_email : currentUser.email,
+            assignmentID: req.params.id,
+            submissionID: submission.id,
+            assignmentName: await currAssignment.name
+          }
+
+          logger.debug(`Data is passed to sns function`);
+
+          publishSnsMessage(dataForSnsMessage);
           sendResponse(res,201,submission);
         }
         catch (error)
@@ -289,8 +303,11 @@ const submissionAssignment = async(req,res) => {
       {
         logger.info("Deadline passed or Maximum Subissions limit reached");
         sendResponse(res,400, {"message" : "Deadline passed or Maximum Subissions limit reached"});
-
       }
+    }
+    else
+    {
+      sendResponse(res,401, {"message" : "User does not exist"});
     }
   }
 }
