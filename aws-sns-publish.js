@@ -10,11 +10,12 @@ AWS.config.credentials = new AWS.SharedIniFileCredentials({ profile: awsProfile 
 
 const awsRegion = process.env.AWSREGION;
 
-// const roleArn = 'arn:aws:iam::387983162026:role/snsfullaccessforlocal';
+const roleArn = 'arn:aws:iam::387983162026:role/snsfullaccessforlocal';
 
 AWS.config.update({ region: awsRegion });
 
 const sts = new AWS.STS();
+
 const sns = new AWS.SNS();
 
 const topicArn = process.env.SNSTOPICARN;
@@ -97,8 +98,6 @@ const publishSnsMessage = async(req,res) => {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" }); 
   }
-
-  
 
 }
 
