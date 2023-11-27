@@ -18,12 +18,16 @@ function isURL(input) {
 
 const Submissions = sequelize.define('submissions', {
     id: {
-      type: DataTypes.UUIDV4,
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       readOnly : true,
     },
     assignment_id: {
+      type: DataTypes.UUID,
+      readOnly: true,
+    },
+    account_id: {
       type: DataTypes.UUID,
       readOnly: true,
     },

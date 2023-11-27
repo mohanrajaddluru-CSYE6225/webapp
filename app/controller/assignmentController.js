@@ -246,6 +246,7 @@ const submissionAssignment = async(req,res) => {
     const currentUser = await validateUser(authorizationHeader);
     if (currentUser)
     {
+      console.log(currentUser, "this is the current user details");
       var currAssignment = await Assignment.findOne(
       {
         where : 
@@ -261,10 +262,15 @@ const submissionAssignment = async(req,res) => {
         {
           where:
           {
-            assignment_id: req.params.id
+            assignment_id: req.params.id,
+            account_id: currentUser.id
           }
         }
       )
+
+      console.log(currSubmissions , "these are current submission");
+
+
       logger.info(`${currSubmissions.length} submissions are submitted already for ${req.params.id}`);
       logger.info(`${currAssignment.deadline} is deadline for current Assignment with ID ${req.params.id}`);
       logger.debug(`${ JSON.stringify(currSubmissions)} are the submission details for ${req.params.id}`);
@@ -276,6 +282,7 @@ const submissionAssignment = async(req,res) => {
             {
               assignment_id: req.params.id,
               submission_url: req.body.submission_url,
+              account_id : currentUser.id,
               submission_date: new Date(),
               submission_updated: new Date()
             }
@@ -290,12 +297,15 @@ const submissionAssignment = async(req,res) => {
 
           logger.debug(`Data is passed to sns function`);
 
-          publishSnsMessage(dataForSnsMessage);
+          await publishSnsMessage(dataForSnsMessage);
+
+          logger.info("Message passed to SNS TOPIC")
           sendResponse(res,201,submission);
         }
         catch (error)
         {
           logger.info("Error in submitting the assignment")
+          logger.error(`Error in submitting with below error ${error}`);
           sendResponse(res,400,error.message);
         }
       }
