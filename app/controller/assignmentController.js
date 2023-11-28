@@ -149,29 +149,52 @@ const postAssignment = async (req,res) =>
 const removeAssignment = async (req,res) => {
   const authorizationHeader = req.headers.authorization;
 
-    if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) {
+    if (!authorizationHeader || !authorizationHeader.startsWith('Basic ')) 
+    {
       logger.error("Authentication not found");
       sendResponse(res,401,"Authentication required");
-      }
-      else{
-        const currentUser = await validateUser(authorizationHeader);
-        if (currentUser)
-        {
-          var assignmentListForCurrentUser = await currUserAsignments(currentUser)
-            const index = assignmentListForCurrentUser.indexOf(req.params.id);
-            if (index !== -1)
+    }
+    else
+    {
+      const currentUser = await validateUser(authorizationHeader);
+      if (currentUser)
+      {
+        var assignmentListForCurrentUser = await currUserAsignments(currentUser)
+          const index = assignmentListForCurrentUser.indexOf(req.params.id);
+          if (index !== -1)
+          {
+            var currSubmissions = await Submissions.findAll(
+              {
+                where:
+                {
+                  assignment_id: req.params.id
+                }
+              }
+            ) 
+            console.log(currSubmissions, "These are current submission");
+            if (currSubmissions.length >= 1)
             {
+              logger.info(`Assignment with ID : ${req.params.id} cannot be deleted because of Associated Submissions`);
+              sendResponse(res,403,"Submissions are associated with this assignment");
+            }
+            else
+            {
+              logger.info(`Assignment with ID : ${req.params.id} will be deleted because of No Associated Submissions`);
               const removeFromAssignments = await Assignment.destroy({
                 where : {
                   id : req.params.id
                 }
               })
 
+              logger.info(`Assignment with ID : ${req.params.id} deleted because of No Associated Submissions`);
+
               const removeFromAssignmentCreator = await AssignmentCreator.destroy({
                 where : {
                   assignmentId: req.params.id
                 }
               })
+
+              logger.info(`Assignment with ID : ${req.params.id} deleted because of No Associated Submissions`);
 
               if (removeFromAssignments > 0 && removeFromAssignmentCreator)
               {
@@ -181,20 +204,22 @@ const removeAssignment = async (req,res) => {
               }
               else
               {
-                sendResponse(res,400);
+                sendResponse(res,400,"Bad Request");
               }
             }
-            else
-            {
-              sendResponse(res,403);
-            }
-        }
-        else{
-          logger.debug("Un authorized request");
-            return res.status(401).json("Unauthorized request");
-        }
-        }
+          }
+          else
+          {
+            sendResponse(res,403);
+          }
       }
+      else
+      {
+        logger.debug("Un authorized request");
+        return res.status(401).json("Unauthorized request");
+      }
+    }
+}
 
 
 
