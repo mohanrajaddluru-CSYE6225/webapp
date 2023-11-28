@@ -4,13 +4,7 @@ const logger = require('./logger/developmentLogs.js');
 
 const AWS = require('aws-sdk');
 
-const awsProfile = 'mohan-dev-iam'
-
-AWS.config.credentials = new AWS.SharedIniFileCredentials({ profile: awsProfile });
-
 const awsRegion = process.env.AWSREGION;
-
-const roleArn = 'arn:aws:iam::387983162026:role/snsfullaccessforlocal';
 
 AWS.config.update({ region: awsRegion });
 
@@ -23,25 +17,6 @@ const topicArn = process.env.SNSTOPICARN;
 const publishSnsMessage = async(req,res) => {
   try 
   {
-
-    // const assumedRole = await sts.assumeRole({
-    //   RoleArn: roleArn,
-    //   RoleSessionName: 'your-session-name',
-    // }).promise();
-
-    // // Use the temporary security credentials
-    // const temporaryCredentials = {
-    //   accessKeyId: assumedRole.Credentials.AccessKeyId,
-    //   secretAccessKey: assumedRole.Credentials.SecretAccessKey,
-    //   sessionToken: assumedRole.Credentials.SessionToken,
-    // };
-
-    // // Configure AWS SDK with temporary credentials
-    // AWS.config.update({
-    //   credentials: new AWS.Credentials(temporaryCredentials),
-    //   region: awsRegion,
-    // });
-
     const message = `Assignment posted by User - ${req.user_email} for Assignment ID - ${req.assignmentId}`;
     const attributes = {
       submission_url : {
