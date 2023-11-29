@@ -338,7 +338,7 @@ const submissionAssignment = async(req,res) => {
       else
       {
         logger.info("Deadline passed or Maximum Subissions limit reached");
-        sendResponse(res,400, {"message" : "Deadline passed or Maximum Subissions limit reached"});
+        sendResponse(res,403, {"message" : "Deadline passed or Maximum Subissions limit reached"});
       }
     }
     else
