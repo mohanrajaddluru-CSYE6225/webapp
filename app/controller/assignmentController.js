@@ -317,7 +317,8 @@ const submissionAssignment = async(req,res) => {
             user_email : currentUser.email,
             assignmentID: req.params.id,
             submissionID: submission.id,
-            assignmentName: await currAssignment.name
+            assignmentName: await currAssignment.name,
+            assignmentCount: currSubmissions.length + 1
           }
 
           logger.debug(`Data is passed to sns function`);
