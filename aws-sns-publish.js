@@ -38,6 +38,10 @@ const publishSnsMessage = async(req,res) => {
       assignmentName : {
         DataType: "String",
         StringValue: req.assignmentName,
+      },
+      assignmentCount : {
+        DataType: "Number",
+        StringValue: req.assignmentCount.toString(),
       }
     }
 

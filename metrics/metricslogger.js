@@ -16,6 +16,7 @@ const logRequestCount = (req, res, next) => {
     },
     'POST': {
       '/v1/assignments/': 'Create Assignment API',
+      '/v1/assignments/:id/submission': 'Assignment Submission API'
     },
     'PUT': {
       '/v1/assignments/:id': 'Update Assignment API',
