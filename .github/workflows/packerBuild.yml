@@ -17,6 +17,7 @@ env:
   AWS_REGION: ${{ vars.AMI_REGION }}
   PORT: ${{ vars.PORT }}
   LAUNCH_TEMPLATE_ID: ${{ vars.LAUNCH_TEMPLATE_ID }} 
+  AUTO_SCALE_GROUP_ID : ${{ vars.AUTO_SCALE_GROUP_ID }}
 
 
 jobs:
@@ -110,23 +111,23 @@ jobs:
 
       - name: Create New Version of Launch Template
         run: | 
+          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws ec2 create-launch-template-version \
           --launch-template-id ${{ env.LAUNCH_TEMPLATE_ID }} \
           --version-description "New version with AMI ${{ env.AMI_ID }}" \
           --region $AWS_REGION \
           --source-version 1 \
-          --launch-template-data '{"ImageId": "${{ env.AMI_ID }}" }' \
-          --aws-access-key-id ${{ env.AWS_ACCESS_KEY_ID }} \
-          --aws-secret-access-key ${{ env.AWS_SECRET_ACCESS_KEY }}
+          --launch-template-data '{"ImageId": "${{ env.AMI_ID }}" }'
 
       - name: Apply Launch Template Refresh
         run: | 
+          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws start-instance-refresh \
-          --auto-scaling-group-name webappAutoScaleGroup-1f2f7c4 \
+          --auto-scaling-group-name $AUTO_SCALE_GROUP_ID \
           --desired-configuration '{"LaunchTemplate" : { "LaunchTemplateId":"${{ env.LAUNCH_TEMPLATE_ID }}"", "Version":"$LATEST" }' \
           --region $AWS_REGION
-          --aws-access-key-id ${{ env.AWS_ACCESS_KEY_ID }} \
-          --aws-secret-access-key ${{ env.AWS_SECRET_ACCESS_KEY }}
 
 
 
