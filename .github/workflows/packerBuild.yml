@@ -16,6 +16,7 @@ env:
   #DEMO_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ vars.AMI_REGION }}
   PORT: ${{ vars.PORT }}
+  LAUNCH_TEMPLATE_ID: ${{ vars.LAUNCH_TEMPLATE_ID }} 
 
 
 jobs:
@@ -110,8 +111,22 @@ jobs:
       - name: Create New Version of Launch Template
         run: | 
           aws ec2 create-launch-template-version \
-          --launch-template-id lt-07a068fafa1cb41b5 \
+          --launch-template-id ${{ env.LAUNCH_TEMPLATE_ID }} \
           --version-description "New version with AMI ${{ env.AMI_ID }}" \
+          --region $AWS_REGION \
           --source-version 1 \
-          --launch-template-data '{"InstanceType":"t2.nano", "ImageId": "${{ env.AMI_ID }}" }'
+          --launch-template-data '{"ImageId": "${{ env.AMI_ID }}" }' \
+          --aws-access-key-id ${{ env.AWS_ACCESS_KEY_ID }} \
+          --aws-secret-access-key ${{ env.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Apply Launch Template Refresh
+        run: | 
+          aws start-instance-refresh \
+          --auto-scaling-group-name webappAutoScaleGroup-1f2f7c4 \
+          --desired-configuration '{"LaunchTemplate" : { "LaunchTemplateId":"${{ env.LAUNCH_TEMPLATE_ID }}"", "Version":"$LATEST" }' \
+          --region $AWS_REGION
+          --aws-access-key-id ${{ env.AWS_ACCESS_KEY_ID }} \
+          --aws-secret-access-key ${{ env.AWS_SECRET_ACCESS_KEY }}
+
+
 
