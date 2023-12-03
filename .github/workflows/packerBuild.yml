@@ -104,11 +104,9 @@ jobs:
           -var "owners=$AMIOWNERID" aws-ubuntu.pkr.hcl
           ami_id=$(cat manifest.json | grep -o '"artifact_id": "[^"]*' | cut -d'"' -f4 | cut -d':' -f2)
           echo $ami_id
-      - name: Set AMI ID as a variable
-        run: |
-          echo $ami_id
           echo "AMI_ID=$ami_id" >> $GITHUB_ENV
-          echo $AMI_ID
+      - name: Set AMI ID as a variable
+        run: echo "ami_id=${{ env.AMI_ID }}" 
   modify_launch_template_version:
     runs-on: ubuntu-latest
     needs: packer_build
@@ -125,9 +123,9 @@ jobs:
         run: | 
           aws ec2 create-launch-template-version \
           --launch-template-id lt-07a068fafa1cb41b5 \
-          --version-description "changing AMI" \
+          --version-description "New version with AMI ${{ needs.packer_build.outputs.ami_id }}" \
           --source-version 1 \
-          --launch-template-data '{"InstanceType":"t2.nano", "ImageId":"${AMI_ID}"}'
+          --launch-template-data '{"InstanceType":"t2.nano", "ImageId":"'"${{ needs.packer_build.outputs.ami_id }}"'"}'
 
 
 
