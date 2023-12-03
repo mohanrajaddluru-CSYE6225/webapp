@@ -126,7 +126,7 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws autoscaling start-instance-refresh \
           --auto-scaling-group-name $AUTO_SCALE_GROUP_ID \
-          --desired-configuration '{"LaunchTemplate" : { "LaunchTemplateId":"${{ env.LAUNCH_TEMPLATE_ID }}"", "Version":"$LATEST" }' \
+          --desired-configuration '{"LaunchTemplate" : { "LaunchTemplateId":"${{ env.LAUNCH_TEMPLATE_ID }}", "Version":"$LATEST" }' \
           --region $AWS_REGION
 
 
