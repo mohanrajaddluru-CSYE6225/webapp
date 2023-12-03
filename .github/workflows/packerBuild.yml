@@ -113,5 +113,5 @@ jobs:
           --launch-template-id lt-07a068fafa1cb41b5 \
           --version-description "New version with AMI ${{ env.AMI_ID }}" \
           --source-version 1 \
-          --launch-template-data '{"InstanceType":"t2.nano", "ImageId": ${{ env.AMI_ID }}}'
+          --launch-template-data '{"InstanceType":"t2.nano", "ImageId": "${{ env.AMI_ID }}" }'
 
