@@ -12,6 +12,8 @@ env:
   AMISHAREDOWNER: ${{ vars.AMISHAREDOWNER }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #DEMO_AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+  #DEMO_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ vars.AMI_REGION }}
   PORT: ${{ vars.PORT }}
 
@@ -93,9 +95,36 @@ jobs:
         run: packer validate .
       
       - name: packer build
+        id: packer_build
         run: |
           packer build -var "region=$AMI_REGION" \
           -var "ssh_username=$LOGIN_USERNAME" \
           -var "instance_type=$INSTANCE_TYPE" \
           -var "ami_users=$AMISHAREDOWNER" \
-          -var "owners=$AMIOWNERID" aws-ubuntu.pkr.hcl
+          -var "owners=$AMIOWNERID" aws-ubuntu.pkr.hcl | tee /dev/tty | grep -Eo 'ami-[a-z0-9]+' > ami_id.txt
+
+          echo "AMI_ID=${AMI_ID}" >> $GITHUB_ENV
+  modify_launch_template_version:
+    runs-on: ubuntu-latest
+    needs: packer_build
+    name: Modify Latest AMI
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }} 
+
+      - name: Create New Version of Launch Template
+        run: | 
+          aws ec2 create-launch-template-version \
+          --launch-template-id lt-07a068fafa1cb41b5 \
+          --version-description "changing AMI" \
+          --source-version 1 \
+          --launch-template-data '{"InstanceType":"t2.nano", "ImageId":"${AMI_ID}"}' \
+          --region us-east-1 \
+
+
+
+    
