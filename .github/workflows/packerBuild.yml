@@ -101,9 +101,11 @@ jobs:
           -var "ssh_username=$LOGIN_USERNAME" \
           -var "instance_type=$INSTANCE_TYPE" \
           -var "ami_users=$AMISHAREDOWNER" \
-          -var "owners=$AMIOWNERID" aws-ubuntu.pkr.hcl | tee /dev/tty | grep -Eo 'ami-[a-z0-9]+' > ami_id.txt
-
-          echo "AMI_ID=${AMI_ID}" >> $GITHUB_ENV
+          -var "owners=$AMIOWNERID" aws-ubuntu.pkr.hcl
+          ami_id=$(cat manifest.json | grep -o '"artifact_id": "[^"]*' | cut -d'"' -f4 | cut -d':' -f2)
+      - name: Set AMI ID as a variable
+        run: echo "AMI_ID=$ami_id" >> $GITHUB_ENV
+      
   modify_launch_template_version:
     runs-on: ubuntu-latest
     needs: packer_build
