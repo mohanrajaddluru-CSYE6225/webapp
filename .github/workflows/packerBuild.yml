@@ -114,3 +114,4 @@ jobs:
           --version-description "New version with AMI ${{ env.AMI_ID }}" \
           --source-version 1 \
           --launch-template-data '{"InstanceType":"t2.nano", "ImageId": ${{ env.AMI_ID }}}'
+
