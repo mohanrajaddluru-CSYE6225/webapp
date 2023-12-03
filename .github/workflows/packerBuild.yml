@@ -12,8 +12,8 @@ env:
   AMISHAREDOWNER: ${{ vars.AMISHAREDOWNER }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #DEMO_AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
-  #DEMO_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
+  DEMO_AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+  DEMO_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ vars.AMI_REGION }}
   PORT: ${{ vars.PORT }}
   LAUNCH_TEMPLATE_ID: ${{ vars.LAUNCH_TEMPLATE_ID }} 
@@ -111,8 +111,8 @@ jobs:
 
       - name: Create New Version of Launch Template
         run: | 
-          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          export AWS_ACCESS_KEY_ID=${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
           aws ec2 create-launch-template-version \
           --launch-template-id ${{ env.LAUNCH_TEMPLATE_ID }} \
           --version-description "New version with AMI ${{ env.AMI_ID }}" \
@@ -122,12 +122,36 @@ jobs:
 
       - name: Apply Launch Template Refresh
         run: | 
-          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws autoscaling start-instance-refresh \
+          export AWS_ACCESS_KEY_ID=${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
+
+
+          refresh_response=$(aws autoscaling start-instance-refresh \
           --auto-scaling-group-name $AUTO_SCALE_GROUP_ID \
           --desired-configuration '{"LaunchTemplate" : { "LaunchTemplateId":"${{ env.LAUNCH_TEMPLATE_ID }}", "Version":"$Latest" }}' \
-          --region $AWS_REGION
+          --region $AWS_REGION \
+          --query 'InstanceRefreshId' \
+          --output text)
+
+          while true; do
+            refresh_status=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name $AUTO_SCALE_GROUP_ID \
+              --instance-refresh-ids $refresh_response \
+              --region $AWS_REGION \
+              --query 'InstanceRefreshes[0].Status' \
+              --output text)
+      
+            if [ "$refresh_status" == "Pending" ] || [ "$refresh_status" == "InProgress" ]; then
+              echo "Instance refresh is still in progress. Waiting..."
+              sleep 60  # Wait for 60 seconds before checking again
+            elif [ "$refresh_status" == "Successful" ]; then
+              echo "Instance refresh completed successfully."
+              break  # Exit the loop when refresh is successful
+            else
+              echo "Error: Instance refresh failed or encountered an unexpected status: $refresh_status"
+              exit 1  # Exit with an error if refresh fails or has unexpected status
+            fi
+          done
 
 
 
