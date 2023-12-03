@@ -16,3 +16,10 @@ Demo Change
 
 Assignment8 Demo
 
+Command to add the SSL Certificate from local to aws account
+
+aws acm import-certificate --certificate <certificate.pem> --certificate-chain <ca_bundle.pem> --private-key <privatekey.pem> --profile <AWS profile saved in local > --region <AWS certificate Region>
+
+example use
+aws acm import-certificate --certificate file://certificate_base64.txt --certificate-chain file://cabundle_base64.txt --private-key file://private_base64.txt --profile mohan-demo-iam --region us-east-1
+
