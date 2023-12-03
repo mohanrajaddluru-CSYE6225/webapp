@@ -95,7 +95,6 @@ jobs:
         run: packer validate .
       
       - name: packer build
-        id: packer_build
         run: |
           packer build -var "region=$AMI_REGION" \
           -var "ssh_username=$LOGIN_USERNAME" \
@@ -107,26 +106,12 @@ jobs:
           echo "AMI_ID=$ami_id" >> $GITHUB_ENV
       - name: Set AMI ID as a variable
         run: echo "ami_id=${{ env.AMI_ID }}" 
-  modify_launch_template_version:
-    runs-on: ubuntu-latest
-    needs: packer_build
-    name: Modify Latest AMI
-    steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AMI_REGION }} 
 
       - name: Create New Version of Launch Template
         run: | 
           aws ec2 create-launch-template-version \
           --launch-template-id lt-07a068fafa1cb41b5 \
-          --version-description "New version with AMI ${{ needs.packer_build.outputs.ami_id }}" \
+          --version-description "New version with AMI ${{ env.AMI_ID }}" \
           --source-version 1 \
-          --launch-template-data '{"InstanceType":"t2.nano", "ImageId":"'"${{ needs.packer_build.outputs.ami_id }}"'"}'
+          --launch-template-data '{"InstanceType":"t2.nano", "ImageId": ${{ env.AMI_ID }}}'
 
-
-
-    
