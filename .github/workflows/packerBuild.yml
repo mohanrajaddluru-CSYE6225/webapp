@@ -16,8 +16,8 @@ env:
   DEMO_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ vars.AMI_REGION }}
   PORT: ${{ vars.PORT }}
-  LAUNCH_TEMPLATE_ID: ${{ vars.LAUNCH_TEMPLATE_ID }} 
-  AUTO_SCALE_GROUP_ID : ${{ vars.AUTO_SCALE_GROUP_ID }}
+  LAUNCH_TEMPLATE_NAME: ${{ vars.LAUNCH_TEMPLATE_NAME }} 
+  AUTO_SCALE_GROUP_NAME : ${{ vars.AUTO_SCALE_GROUP_NAME }}
 
 
 jobs:
@@ -103,6 +103,7 @@ jobs:
           -var "instance_type=$INSTANCE_TYPE" \
           -var "ami_users=$AMISHAREDOWNER" \
           -var "owners=$AMIOWNERID" aws-ubuntu.pkr.hcl
+          cat manifest.json
           ami_id=$(cat manifest.json | grep -o '"artifact_id": "[^"]*' | cut -d'"' -f4 | cut -d':' -f2)
           echo $ami_id
           echo "AMI_ID=$ami_id" >> $GITHUB_ENV
@@ -114,10 +115,10 @@ jobs:
           export AWS_ACCESS_KEY_ID=${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
           aws ec2 create-launch-template-version \
-          --launch-template-id ${{ env.LAUNCH_TEMPLATE_ID }} \
+          --launch-template-name ${{ env.LAUNCH_TEMPLATE_NAME }} \
           --version-description "New version with AMI ${{ env.AMI_ID }}" \
           --region $AWS_REGION \
-          --source-version 1 \
+          --source-version $Latest \
           --launch-template-data '{"ImageId": "${{ env.AMI_ID }}" }'
 
       - name: Apply Launch Template Refresh
@@ -127,15 +128,15 @@ jobs:
 
 
           refresh_response=$(aws autoscaling start-instance-refresh \
-          --auto-scaling-group-name $AUTO_SCALE_GROUP_ID \
-          --desired-configuration '{"LaunchTemplate" : { "LaunchTemplateId":"${{ env.LAUNCH_TEMPLATE_ID }}", "Version":"$Latest" }}' \
+          --auto-scaling-group-name $AUTO_SCALE_GROUP_NAME \
+          --desired-configuration '{"LaunchTemplate" : { "LaunchTemplateName":"${{ env.LAUNCH_TEMPLATE_NAME }}", "Version":"$Latest" }}' \
           --region $AWS_REGION \
           --query 'InstanceRefreshId' \
           --output text)
 
           while true; do
             refresh_status=$(aws autoscaling describe-instance-refreshes \
-              --auto-scaling-group-name $AUTO_SCALE_GROUP_ID \
+              --auto-scaling-group-name $AUTO_SCALE_GROUP_NAME \
               --instance-refresh-ids $refresh_response \
               --region $AWS_REGION \
               --query 'InstanceRefreshes[0].Status' \
