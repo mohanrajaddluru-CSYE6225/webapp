@@ -118,7 +118,7 @@ jobs:
           --launch-template-name ${{ env.LAUNCH_TEMPLATE_NAME }} \
           --version-description "New version with AMI ${{ env.AMI_ID }}" \
           --region $AWS_REGION \
-          --source-version $Latest \
+          --source-version 1 \
           --launch-template-data '{"ImageId": "${{ env.AMI_ID }}" }'
 
       - name: Apply Launch Template Refresh
