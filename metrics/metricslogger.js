@@ -11,18 +11,18 @@ const logRequestCount = (req, res, next) => {
   const metricConfig = {
     'GET': {
       '/healthz/' : 'Database Health Check API',
-      '/v2/assignments/': 'Get All Assignments API',
-      '/v2/assignments/:id': 'Get Assignment By ID API',
+      '/demo/assignments/': 'Get All Assignments API',
+      '/demo/assignments/:id': 'Get Assignment By ID API',
     },
     'POST': {
-      '/v2/assignments/': 'Create Assignment API',
-      '/v2/assignments/:id/submission': 'Assignment Submission API'
+      '/demo/assignments/': 'Create Assignment API',
+      '/demo/assignments/:id/submission': 'Assignment Submission API'
     },
     'PUT': {
-      '/v2/assignments/:id': 'Update Assignment API',
+      '/demo/assignments/:id': 'Update Assignment API',
     },
     'DELETE': {
-      '/v2/assignments/:id': 'Delete Assignment API',
+      '/demo/assignments/:id': 'Delete Assignment API',
     },
   };
 
