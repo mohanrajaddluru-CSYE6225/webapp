@@ -50,7 +50,7 @@ function isEmptyRequest(req, res, next) {
 }
 
 
-app.use('/demo/assignments', isValidJson, assignmentRoute);
+app.use('/v3/assignments', isValidJson, assignmentRoute);
 app.use('/healthz', isValidJson, isEmptyRequest, healthCheckRoutes);
 app.use('/metadata', getlatestmetadata);
 
